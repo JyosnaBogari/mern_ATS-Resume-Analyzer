@@ -1,0 +1,32 @@
+
+### user register
+POST http://localhost:3000/user-api/users
+Content-Type: application/json
+
+{
+    "firstName": "Hussain",
+    "lastName": "DV",
+    "email": "hussain_dv@test.com",
+    "password": "hussain123"
+}
+
+###  Login the User
+POST http://localhost:3000/user-api/authenticate
+Content-Type: application/json
+
+{
+    "email": "hussain_dv@test.com",
+    "password": "hussain123"
+}
+
+### logout
+GET  http://localhost:3000/user-api/logout
+
+### upload resumes
+POST http://localhost:3000/api/resume/upload
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="resume"; filename="resume.pdf"
+Content-Type: application/pdf
+
