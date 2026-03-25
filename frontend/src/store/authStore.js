@@ -9,7 +9,7 @@ export const useAuth=create((set)=>({
     login:async(userCredObj)=>{
        try{
         set({loading:true,error:null})
-        //    make an API call 
+        //    make an API call
         let res=await axios.post('http://localhost:3000/user-api/authenticate',userCredObj,{withCredentials:true})
         set({
             loading:false,
@@ -29,7 +29,7 @@ export const useAuth=create((set)=>({
        logout:async()=>{
        try{
         set({loading:true,error:null})
-        //    make an API call 
+        //    make an API call
         await axios.get('http://localhost:3000/user-api/logout',{withCredentials:true})
         set({
             loading:false,
@@ -46,6 +46,23 @@ export const useAuth=create((set)=>({
            })
        }
 
-       }
+       },
+       refreshToken: async () => {
+        try {
+          const res = await axios.post('http://localhost:3000/user-api/refresh', {}, { withCredentials: true });
+          set({
+            currentUser: res.data.payload,
+            isAuthenticated: true
+          });
+          return res.data;
+        } catch (err) {
+          set({
+            isAuthenticated: false,
+            currentUser: null,
+            error: err.response?.data.error || "Token refresh failed"
+          });
+          throw err;
+        }
+      }
     })
 )

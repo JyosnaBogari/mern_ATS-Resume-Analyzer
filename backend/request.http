@@ -10,7 +10,7 @@ Content-Type: application/json
     "password": "hussain123"
 }
 
-###  Login the User
+### Login the User
 POST http://localhost:3000/user-api/authenticate
 Content-Type: application/json
 
@@ -20,13 +20,24 @@ Content-Type: application/json
 }
 
 ### logout
-GET  http://localhost:3000/user-api/logout
+GET http://localhost:3000/user-api/logout
 
-### upload resumes
-POST http://localhost:3000/api/resume/upload
+### upload resumes (requires auth cookie or Authorization header)
+# - If using the VS Code REST Client, the cookie from login should be sent automatically.
+# - Alternatively, copy the token from the login response and set it below.
+
+POST http://localhost:3000/resume-api/upload
 Content-Type: multipart/form-data; boundary=MyBoundary
+# Authorization: Bearer {{token}}
 
 --MyBoundary
-Content-Disposition: form-data; name="resume"; filename="resume.pdf"
+Content-Disposition: form-data; name="resume"; filename="sample.pdf"
 Content-Type: application/pdf
+
+< ./sample.pdf
+--MyBoundary
+Content-Disposition: form-data; name="targetRole"
+
+Software Engineer
+--MyBoundary--
 

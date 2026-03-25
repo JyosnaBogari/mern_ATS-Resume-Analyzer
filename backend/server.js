@@ -3,20 +3,23 @@ import exp from 'express';
 import { connect } from 'mongoose'
 import cors from 'cors';
 import { userRoute } from './APIs/userAPI.js';
+import resumeRoute from './APIs/resumeAPI.js';
 import cookieParser from "cookie-parser";
 
 config();
 //port
-const PORT = process.env.DB_URL || 4000;
+const PORT = process.env.PORT || 3000;
 
 const app = exp();
 //cors
 app.use(cors({origin:["http://localhost:5173"],credentials:true}));
 //body parser
-app.use(exp.json());
+app.use(exp.json({ limit: '10mb' }));
+app.use(exp.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser())
 //routes
 app.use('/user-api', userRoute);
+app.use('/resume-api', resumeRoute);
 
 
 //connect to DB 
@@ -26,7 +29,7 @@ const connectDB = async () => {
     console.log("Connected To DataBase succesfully")
     // server listen port
     app.listen(process.env.PORT, () => {
-      console.log(`Server running on http://localhost:${process.env.PORT}`);
+      console.log(`Server running on http://localhost:${PORT}`);
     })
 
   } catch (err) {

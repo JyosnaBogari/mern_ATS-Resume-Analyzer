@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../store/authStore";
 import { useEffect} from "react";
 import { useNavigate } from "react-router";
-import { errorClass,formCard,formTitle,inputClass,formGroup,submitBtn } from "../styles/common";
+import { errorClass,formCard,formTitle,inputClass,formGroup,submitBtn, pageBackground } from "../styles/common";
 import {toast} from 'react-hot-toast';
 
 function SignIn() {
@@ -26,11 +26,11 @@ function SignIn() {
     {
       
         toast.success("Logged In successfully")
-         navigate('/user-profile')
+         navigate('/dashboard')
     }
   },[isAuthenticated,currentUser])
   return (
-  <div className="flex justify-center items-center min-h-screen bg-gray-200">
+  <div className={pageBackground + " flex justify-center items-center"}>
         
     <form
       onSubmit={handleSubmit(onUserLogin)}
@@ -90,7 +90,7 @@ function SignIn() {
       </button>
 
     </form>
-
+   
   </div>
 );
 }

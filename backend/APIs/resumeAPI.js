@@ -1,49 +1,74 @@
-import express from 'express';
+import express from "express";
+import { upload } from "../config/multer.js";
+import { uploadToCloudinary } from "../config/CloudinaryUpload.js";
+import { extractTextFromBuffer } from "../utils/extractText.js";
+import { authenticateToken } from "../middleware/authMiddleware.js";
+import Resume from "../models/Resume.js";
+
 const router = express.Router();
-import { upload } from '../config/cloudinary.js';
-import Resume from '../models/Resume.js';
-import { extractTextFromURL } from '../utils/extractText.js';
 
-router.post('/upload', upload.single('resume'), async (req, res) => {
-  try {
-    // 1. Check if file was uploaded
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const fileUrl = req.file.path;
-
-    // 2. Extract Text
-    const extractedText = await extractTextFromURL(fileUrl);
-
-    // 3. Save to MongoDB
-    const newResume = new Resume({
-      fileUrl: fileUrl,
-      extractedText: extractedText || "No text content found",
-    });
-
-    await newResume.save();
-
-    // 4. Send response
-    res.status(200).json({
-      success: true,
-      message: "Resume uploaded, parsed, and saved!",
-      data: {
-        id: newResume._id,
-        url: fileUrl,
-        textPreview: extractedText ? extractedText.substring(0, 150) + "..." : "Empty"
+router.post(
+  "/upload",
+  authenticateToken,
+  upload.single("resume"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
       }
-    });
 
-  } catch (error) { // The catch must follow the try block directly
-    console.error("Critical Upload Error:", error.message || error);
-    
-    res.status(500).json({ 
-      success: false, 
-      message: "Server failed to process resume", 
-      error: error.message || "Unknown error"
-    });
+      console.log("FILE:", req.file);
+      console.log("BODY:", req.body);
+
+      const { targetRole } = req.body;
+      const userId = req.user.userId;
+
+      //  Extract text
+      const extractedText = await extractTextFromBuffer(req.file.buffer);
+
+      // Upload to Cloudinary
+      const result = await uploadToCloudinary(req.file.buffer);
+
+      //  FIXED suggestions format
+      const analysisResult = {
+        atsScore: 75,
+        suggestions: [
+          {
+            title: "Add more keywords",
+            description: "Include more relevant keywords related to the job role."
+          },
+          {
+            title: "Improve skills section",
+            description: "Make your skills section more clear and structured."
+          }
+        ],
+        jobMatchScore: 70,
+      };
+
+      //  Save to DB
+      const newResume = new Resume({
+        user: userId,
+        fileUrl: result.secure_url,
+        extractedText,
+        atsScore: analysisResult.atsScore,
+        suggestions: analysisResult.suggestions, //  correct format
+        targetRole: targetRole || "General",
+        jobMatchScore: analysisResult.jobMatchScore,
+      });
+
+      await newResume.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Resume uploaded & analyzed",
+        data: newResume,
+      });
+
+    } catch (err) {
+      console.error("UPLOAD ERROR:", err);
+      res.status(500).json({ message: err.message });
+    }
   }
-});
+);
 
 export default router;
