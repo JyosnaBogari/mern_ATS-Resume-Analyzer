@@ -1,97 +1,107 @@
-# AI-Powered Resume Analyzer
+# ATS Resume Checker 🚀
 
-A full-stack MERN application that analyzes resumes using AI to provide ATS compatibility scores, job matching, and personalized improvement suggestions.
+An AI-powered ATS Resume Analyzer built using the MERN Stack and Gemini AI that helps users improve their resumes based on ATS (Applicant Tracking System) standards and job-role specific recommendations.
 
-## 🚀 Features
+---
 
-- **User Authentication**: JWT-based login with refresh tokens
-- **Resume Upload**: Support for PDF and DOCX files
-- **AI Analysis**: OpenAI-powered ATS scoring and suggestions
-- **Job Matching**: Role-specific resume analysis
-- **Resume History**: Track and manage uploaded resumes
-- **Responsive UI**: Mobile-first design with Tailwind CSS
-- **Real-time Feedback**: Live analysis results and progress indicators
+# Features ✨
 
-## 🏗️ Architecture
+* Upload Resume (PDF)
+* Extract Resume Text Automatically
+* ATS Score Calculation
+* Job Match Score Analysis
+* AI-Powered Resume Suggestions using Gemini AI
+* Resume History Tracking
+* Authentication & Authorization
+* Role-based Resume Analysis
+* Download Improved Resume
+* Responsive Modern UI
 
-### Frontend (React + Vite)
-- **Location**: `/frontend`
-- **Tech Stack**: React 19, Vite, Tailwind CSS, Zustand, Axios
-- **Features**: Responsive UI, state management, API integration
+---
 
-### Backend (Node.js + Express)
-- **Location**: `/backend`
-- **Tech Stack**: Node.js, Express, MongoDB, JWT, OpenAI API
-- **Features**: RESTful APIs, authentication, file processing, AI integration
+# Tech Stack 🛠️
 
-## 📋 Prerequisites
+## Frontend
 
-- Node.js (v16+)
-- MongoDB (local or cloud)
-- OpenAI API key
-- Cloudinary account (for file storage)
+* React.js
+* Tailwind CSS
+* Axios
+* React Router DOM
 
-## 🛠️ Installation & Setup
+## Backend
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd ats-resume-checker
-```
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* Multer
+* PDF-Parse
+* Gemini AI API
 
-### 2. Backend Setup
-```bash
-cd backend
-npm install
-cp .env.example .env
-# Edit .env with your configuration
-npm start
-```
+---
 
-### 3. Frontend Setup
-```bash
-cd ../frontend
-npm install
-npm run dev
-```
+# AI Features 🤖
 
-### 4. Environment Configuration
+The application uses Google Gemini AI to:
 
-Create `.env` files in both backend and frontend directories:
+* Analyze resume quality
+* Detect missing technical skills
+* Suggest ATS keyword improvements
+* Identify weak project descriptions
+* Improve formatting and resume structure
+* Generate role-specific suggestions
 
-**Backend (.env)**:
-```env
-DB_URL=mongodb://localhost:27017/resume_analyzer
-PORT=3000
-SECRET_KEY=your_jwt_secret_key
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-OPENAI_API_KEY=your_openai_key
-```
+---
 
-**Frontend**: No additional env vars needed (uses default localhost URLs)
+# ATS Score Logic 📊
 
-## 🚀 Running the Application
+The ATS score is calculated based on:
 
-1. **Start Backend**:
-   ```bash
-   cd backend && npm start
-   ```
-   Server runs on `http://localhost:3000`
+* Resume structure
+* Skills section
+* Projects section
+* Experience section
+* Contact information
+* Keyword matching
+* Resume length
+* Job-role specific technologies
 
-2. **Start Frontend**:
-   ```bash
-   cd frontend && npm run dev
-   ```
-   App runs on `http://localhost:5173`
+---
 
-3. **Access Application**:
-   Open `http://localhost:5173` in your browser
+# Supported Roles 💼
 
-## 📁 Project Structure
+* Full Stack Developer
+* Frontend Developer
+* Backend Developer
+* Software Engineer
+* General Resume Review
 
-```
+---
+
+# Project Structure 📁
+
+backend/
+│
+├── Controllers/
+├── Models/
+├── Routes/
+├── Services/
+├── Middlewares/
+├── Utils/
+└── server.js
+
+frontend/
+│
+├── Components/
+├── Pages/
+├── Store/
+└── App.jsx
+
+
+
+
+
+
 ats-resume-checker/
 ├── backend/
 │   ├── APIs/
@@ -126,85 +136,87 @@ ats-resume-checker/
 │   ├── package.json
 │   └── README.md
 └── README.md                    # This file
-```
+---
 
-## 🔧 API Documentation
+# Installation ⚙️
 
-### Authentication Endpoints
-- `POST /user-api/users` - User registration
-- `POST /user-api/authenticate` - User login
-- `GET /user-api/logout` - User logout
-- `POST /user-api/refresh` - Refresh JWT token
+## Clone Repository
 
-### Resume Endpoints (Authenticated)
-- `POST /resume-api/upload` - Upload and analyze resume
-- `GET /resume-api/history` - Get resume history
-- `GET /resume-api/:id` - Get specific resume
-- `POST /resume-api/analyze` - Re-analyze resume
-- `GET /resume-api/download/:id` - Download improved resume
-
-## 🎨 UI Components
-
-### Key Frontend Components
-- **SignIn/SignUp**: Authentication forms
-- **Dashboard**: Main user dashboard
-- **DashboardUploadResume**: Resume upload interface
-- **AnalysisResults**: ATS analysis display
-- **ResumeHistory**: Resume management
-- **ResumeBuilder**: Resume creation wizard
-- **ScoreVisualization**: ATS score charts
-
-## 🤖 AI Features
-
-- **ATS Scoring**: Analyzes resume compatibility with ATS systems
-- **Keyword Analysis**: Identifies relevant keywords for target roles
-- **Improvement Suggestions**: AI-generated recommendations
-- **Job Matching**: Role-specific analysis and scoring
-
-## 📱 Responsive Design
-
-- **Mobile-first approach** with Tailwind CSS
-- **Adaptive layouts** for all screen sizes
-- **Touch-friendly interfaces**
-- **Optimized performance** on mobile devices
-
-## 🔒 Security Features
-
-- **JWT Authentication** with refresh tokens
-- **Password hashing** with bcrypt
-- **CORS configuration**
-- **Input validation** and sanitization
-- **Secure file upload** with type/size validation
-
-## 🚀 Deployment
-
-### Backend Deployment
-1. Set production environment variables
-2. Use PM2 for process management
-3. Configure nginx reverse proxy
-4. Set up SSL certificates
-
-### Frontend Deployment
-1. Build production bundle: `npm run build`
-2. Serve static files from `dist/` directory
-3. Configure routing for SPA
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the ISC License.
-
-## 📞 Support
-
-For questions or issues, please open an issue on GitHub or contact the development team.
+git clone <your-repository-link>
 
 ---
 
-**Happy coding! 🎉**
+## Backend Setup
+
+cd backend
+
+npm install
+
+Create .env file:
+
+PORT=3000
+MONGO_URI=your_mongodb_url
+JWT_SECRET=your_secret
+GEMINI_API_KEY=your_api_key
+
+Run Backend:
+
+npm run dev
+
+---
+
+## Frontend Setup
+
+cd frontend
+
+npm install
+
+npm run dev
+
+---
+
+# Gemini AI Integration 🔥
+
+This project integrates Gemini AI for intelligent resume analysis.
+
+Model Used:
+
+* gemini-2.5-flash
+
+Package:
+
+* @google/generative-ai
+
+---
+
+# Future Improvements 🚀
+
+* AI Resume Builder
+* Resume Templates
+* Skill Gap Analysis
+* Interview Question Generator
+* Cover Letter Generator
+* Resume Ranking System
+* Multi-language Support
+
+---
+
+# Author 👩‍💻
+
+Jyosna Bogari
+
+B.Tech Information Technology
+
+Anurag University
+
+---
+
+# Screenshots 📸
+
+(Add project screenshots here)
+
+---
+
+# License 📄
+
+This project is for educational and portfolio purposes.

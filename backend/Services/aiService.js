@@ -1,249 +1,466 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from 'dotenv';
 
 config();
 
-// Function to get OpenAI instance
-const getOpenAIInstance = () => {
-  if (!process.env.OPENAI_API_KEY) {
+console.log('🤖 Gemini AI Service Started...');
+
+/* =========================================================
+   GEMINI INSTANCE
+========================================================= */
+
+const getGeminiInstance = () => {
+  if (!process.env.GEMINI_API_KEY) {
+    console.log('❌ GEMINI_API_KEY missing');
     return null;
   }
-  return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+
+  return new GoogleGenerativeAI(
+    process.env.GEMINI_API_KEY
+  );
 };
 
-// ATS scoring keywords for different job roles
+/* =========================================================
+   JOB KEYWORDS
+========================================================= */
+
 const jobKeywords = {
-  'Software Engineer': [
-    'javascript', 'python', 'java', 'react', 'node.js', 'sql', 'git', 'agile',
-    'api', 'database', 'testing', 'debugging', 'algorithms', 'data structures'
-  ],
-  'Data Scientist': [
-    'python', 'machine learning', 'statistics', 'pandas', 'numpy', 'sql',
-    'tensorflow', 'scikit-learn', 'data analysis', 'visualization', 'r', 'jupyter'
-  ],
-  'Product Manager': [
-    'product strategy', 'roadmap', 'user research', 'agile', 'scrum', 'analytics',
-    'stakeholder management', 'requirements gathering', 'market analysis', 'kpi'
-  ],
-  'UX Designer': [
-    'user research', 'wireframing', 'prototyping', 'figma', 'sketch', 'usability testing',
-    'user-centered design', 'interaction design', 'visual design', 'accessibility'
-  ],
-  'Marketing Manager': [
-    'digital marketing', 'seo', 'content marketing', 'social media', 'analytics',
-    'campaign management', 'brand strategy', 'market research', 'crm', 'google analytics'
-  ],
-  'Business Analyst': [
-    'requirements analysis', 'data analysis', 'sql', 'excel', 'tableau', 'process modeling',
-    'stakeholder management', 'agile', 'user stories', 'business process'
-  ],
-  'DevOps Engineer': [
-    'docker', 'kubernetes', 'aws', 'azure', 'ci/cd', 'jenkins', 'terraform',
-    'linux', 'monitoring', 'automation', 'cloud', 'infrastructure'
-  ],
-  'Frontend Developer': [
-    'html', 'css', 'javascript', 'react', 'vue', 'angular', 'responsive design',
-    'sass', 'webpack', 'typescript', 'accessibility', 'performance'
-  ],
-  'Backend Developer': [
-    'node.js', 'python', 'java', 'php', 'sql', 'mongodb', 'api', 'rest',
-    'microservices', 'authentication', 'security', 'scalability'
-  ],
+
   'Full Stack Developer': [
-    'javascript', 'react', 'node.js', 'python', 'sql', 'html', 'css', 'api',
-    'database', 'git', 'testing', 'deployment', 'cloud'
+    'javascript',
+    'react',
+    'node.js',
+    'mongodb',
+    'express',
+    'api',
+    'html',
+    'css',
+    'git',
+    'sql',
+    'deployment',
+    'cloud'
   ],
-  'Project Manager': [
-    'project planning', 'risk management', 'stakeholder communication', 'agile',
-    'scrum', 'budgeting', 'timeline management', 'team leadership', 'reporting'
+
+  'Frontend Developer': [
+    'html',
+    'css',
+    'javascript',
+    'react',
+    'tailwind',
+    'responsive',
+    'typescript',
+    'redux'
   ],
-  'HR Manager': [
-    'recruitment', 'employee relations', 'performance management', 'training',
-    'compliance', 'talent acquisition', 'hr policies', 'employee engagement'
+
+  'Backend Developer': [
+    'node.js',
+    'express',
+    'mongodb',
+    'sql',
+    'api',
+    'authentication',
+    'jwt',
+    'security'
   ],
-  'Financial Analyst': [
-    'financial modeling', 'excel', 'financial statements', 'valuation', 'forecasting',
-    'risk analysis', 'budgeting', 'variance analysis', 'kpi', 'reporting'
+
+  'Software Engineer': [
+    'java',
+    'python',
+    'javascript',
+    'react',
+    'git',
+    'database',
+    'algorithms',
+    'testing'
+  ],
+
+  'General': [
+    'communication',
+    'teamwork',
+    'leadership',
+    'problem solving'
   ]
 };
 
-export const analyzeResume = async (resumeText, targetRole = 'General') => {
+/* =========================================================
+   RESUME VALIDATION
+========================================================= */
+
+const isResume = (text) => {
+
+  const resumeSections = [
+    'education',
+    'experience',
+    'skills',
+    'projects',
+    'internship',
+    'certifications',
+    'summary',
+    'objective'
+  ];
+
+  let matches = 0;
+
+  resumeSections.forEach(section => {
+
+    if (
+      text.toLowerCase().includes(section)
+    ) {
+      matches++;
+    }
+
+  });
+
+  return matches >= 3;
+};
+
+/* =========================================================
+   MAIN ANALYZE FUNCTION
+========================================================= */
+
+export const analyzeResume = async (
+  resumeText,
+  targetRole = 'General'
+) => {
+
   try {
-    // Calculate ATS score based on keywords
-    const atsScore = calculateATSScore(resumeText, targetRole);
 
-    // Calculate job match score
-    const jobMatchScore = calculateJobMatchScore(resumeText, targetRole);
+    if (!isResume(resumeText)) {
 
-    // Generate AI suggestions
-    const suggestions = await generateAISuggestions(resumeText, targetRole, atsScore);
+      return {
+        atsScore: 0,
+        jobMatchScore: 0,
+
+        suggestions: [
+          {
+            title: 'Invalid Resume',
+
+            description:
+              'Uploaded file does not appear to be a valid resume.'
+          }
+        ]
+      };
+    }
+
+    const atsScore = calculateATSScore(
+      resumeText,
+      targetRole
+    );
+
+    const jobMatchScore =
+      calculateJobMatchScore(
+        resumeText,
+        targetRole
+      );
+
+    const suggestions =
+      await generateAISuggestions(
+        resumeText,
+        targetRole,
+        atsScore
+      );
 
     return {
       atsScore,
       jobMatchScore,
       suggestions
     };
+
   } catch (error) {
-    console.error('AI Analysis Error:', error);
-    // Return default values if AI fails
+
+    console.log(
+      '❌ analyzeResume Error:',
+      error.message
+    );
+
     return {
-      atsScore: 50,
-      jobMatchScore: 40,
+      atsScore: 0,
+      jobMatchScore: 0,
+
       suggestions: [
         {
-          title: 'Resume Analysis Error',
-          description: 'Unable to analyze resume. Please ensure the resume text is readable and try again.'
+          title: 'Analysis Failed',
+
+          description:
+            'Unable to analyze the uploaded resume.'
         }
       ]
     };
   }
 };
 
-const calculateATSScore = (text, targetRole) => {
-  const lowerText = text.toLowerCase();
+/* =========================================================
+   ATS SCORE
+========================================================= */
+
+const calculateATSScore = (
+  text,
+  targetRole
+) => {
+
+  const lowerText =
+    text.toLowerCase();
+
   let score = 0;
-  let maxScore = 100;
 
-  // Basic formatting checks
-  if (text.includes('\n')) score += 10; // Has line breaks
-  if (text.length > 500) score += 10; // Sufficient length
-  if (lowerText.includes('experience') || lowerText.includes('skills')) score += 10;
-
-  // Keyword matching
-  const keywords = jobKeywords[targetRole] || [];
-  let keywordMatches = 0;
-
-  keywords.forEach(keyword => {
-    if (lowerText.includes(keyword.toLowerCase())) {
-      keywordMatches++;
-    }
-  });
-
-  const keywordScore = Math.min((keywordMatches / keywords.length) * 50, 50);
-  score += keywordScore;
-
-  // Contact information check
-  if (lowerText.includes('@') || lowerText.includes('phone') || lowerText.includes('email')) {
+  if (lowerText.includes('education'))
     score += 10;
-  }
 
-  return Math.min(Math.round(score), 100);
-};
+  if (lowerText.includes('skills'))
+    score += 10;
 
-const calculateJobMatchScore = (text, targetRole) => {
-  if (targetRole === 'General') return 50;
+  if (lowerText.includes('experience'))
+    score += 10;
 
-  const keywords = jobKeywords[targetRole] || [];
-  const lowerText = text.toLowerCase();
+  if (lowerText.includes('projects'))
+    score += 10;
+
+  if (lowerText.includes('@'))
+    score += 10;
+
+  if (text.length > 1000)
+    score += 10;
+
+  const keywords =
+    jobKeywords[targetRole] || [];
+
   let matches = 0;
 
   keywords.forEach(keyword => {
-    if (lowerText.includes(keyword.toLowerCase())) {
+
+    if (
+      lowerText.includes(
+        keyword.toLowerCase()
+      )
+    ) {
       matches++;
     }
+
   });
 
-  return Math.min(Math.round((matches / keywords.length) * 100), 100);
+  let keywordScore = 0;
+
+  if (keywords.length > 0) {
+
+    keywordScore =
+      Math.round(
+        (matches / keywords.length) * 40
+      );
+  }
+
+  score += keywordScore;
+
+  return Math.min(score, 100);
 };
 
-const generateAISuggestions = async (resumeText, targetRole, currentScore) => {
-  try {
-    // If OpenAI is not configured, return default suggestions
-    const openai = getOpenAIInstance();
-    if (!openai) {
-      console.warn('⚠️  OpenAI API key not configured. Using default suggestions.');
-      return getDefaultSuggestions(currentScore, targetRole);
+/* =========================================================
+   JOB MATCH SCORE
+========================================================= */
+
+const calculateJobMatchScore = (
+  text,
+  targetRole
+) => {
+
+  if (targetRole === 'General') {
+    return 50;
+  }
+
+  const keywords =
+    jobKeywords[targetRole] || [];
+
+  const lowerText =
+    text.toLowerCase();
+
+  if (keywords.length === 0) {
+    return 0;
+  }
+
+  let matches = 0;
+
+  keywords.forEach(keyword => {
+
+    if (
+      lowerText.includes(
+        keyword.toLowerCase()
+      )
+    ) {
+      matches++;
     }
+
+  });
+
+  return Math.min(
+    Math.round(
+      (matches / keywords.length) * 100
+    ),
+    100
+  );
+};
+
+/* =========================================================
+   GEMINI AI SUGGESTIONS
+========================================================= */
+
+const generateAISuggestions = async (
+  resumeText,
+  targetRole,
+  currentScore
+) => {
+
+  try {
+
+    const genAI =
+      getGeminiInstance();
+
+    if (!genAI) {
+
+      return [
+        {
+          title: 'Gemini API Missing',
+
+          description:
+            'GEMINI_API_KEY not found in .env'
+        }
+      ];
+    }
+
+    console.log(
+      '📤 Sending request to Gemini...'
+    );
+
+    const model =
+      genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash'
+      });
 
     const prompt = `
-Analyze this resume for a ${targetRole} position. Current ATS score: ${currentScore}/100.
+You are an ATS Resume Analyzer.
 
-Resume text:
-${resumeText.substring(0, 2000)}
+Analyze this resume carefully.
 
-Provide 3-5 specific, actionable suggestions to improve this resume for ATS systems and the target role. Focus on:
-1. Keyword optimization
-2. Formatting improvements
-3. Content enhancements
-4. ATS compatibility
+Target Role:
+${targetRole}
 
-Format each suggestion as a title and description.
+Current ATS Score:
+${currentScore}/100
+
+Resume:
+${resumeText.substring(0, 3000)}
+
+Instructions:
+- Give ONLY resume-specific suggestions
+- Do NOT give generic suggestions
+- Mention missing skills
+- Mention weak projects
+- Mention formatting issues
+- Mention ATS keyword improvements
+
+Return ONLY valid JSON.
+
+Format:
+
+[
+  {
+    "title": "Suggestion title",
+    "description": "Detailed explanation"
+  }
+]
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert resume consultant specializing in ATS optimization. Provide concise, actionable advice."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 500,
-      temperature: 0.7
-    });
+    const result =
+      await model.generateContent(
+        prompt
+      );
 
-    const aiResponse = completion.choices[0].message.content;
+    const response =
+      await result.response;
 
-    // Parse AI response into structured suggestions
-    const suggestions = parseAISuggestions(aiResponse);
+    const text =
+      response.text();
 
-    return suggestions.length > 0 ? suggestions : getDefaultSuggestions(currentScore, targetRole);
+    console.log(
+      '✅ Gemini Raw Response:'
+    );
+
+    console.log(text);
+
+    const cleaned =
+      text
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .trim();
+
+    const suggestions =
+      JSON.parse(cleaned);
+
+    return suggestions;
+
   } catch (error) {
-    console.error('AI Suggestions Error:', error);
-    return getDefaultSuggestions(currentScore, targetRole);
-  }
-};
 
-const parseAISuggestions = (aiResponse) => {
-  const suggestions = [];
-  const lines = aiResponse.split('\n').filter(line => line.trim());
+    console.log(
+      '❌ Gemini Error:',
+      error.message
+    );
 
-  let currentSuggestion = null;
+    return [
+      {
+        title: 'Gemini Error',
 
-  lines.forEach(line => {
-    if (line.match(/^\d+\.?\s/) || line.match(/^[A-Z][^:]*:/)) {
-      if (currentSuggestion) {
-        suggestions.push(currentSuggestion);
+        description:
+          'Failed to generate AI suggestions.'
       }
-      const title = line.replace(/^\d+\.?\s*/, '').replace(/:$/, '').trim();
-      currentSuggestion = { title, description: '' };
-    } else if (currentSuggestion && line.trim()) {
-      currentSuggestion.description += line.trim() + ' ';
-    }
-  });
-
-  if (currentSuggestion) {
-    suggestions.push(currentSuggestion);
+    ];
   }
-
-  return suggestions.slice(0, 5); // Limit to 5 suggestions
 };
 
-const getDefaultSuggestions = (score, targetRole) => {
-  const suggestions = [
-    {
-      title: 'Add Relevant Keywords',
-      description: `Include more keywords related to ${targetRole} such as technical skills, tools, and industry terms.`
-    },
-    {
-      title: 'Improve Formatting',
-      description: 'Use standard fonts, clear headings, and consistent formatting. Avoid tables, images, and complex layouts.'
-    },
-    {
-      title: 'Quantify Achievements',
-      description: 'Add specific numbers and metrics to demonstrate your impact (e.g., "Increased sales by 25%").'
-    },
-    {
-      title: 'Optimize File Format',
-      description: 'Save your resume as a .docx or .pdf file. Ensure the file name includes relevant keywords.'
-    }
-  ];
+/* =========================================================
+   GEMINI TEST
+========================================================= */
 
-return suggestions.slice(0, Math.max(2, 5 - Math.floor(score / 20)));
+export const testGeminiConnection =
+  async () => {
+
+    try {
+
+      const genAI =
+        getGeminiInstance();
+
+      if (!genAI) {
+
+        console.log(
+          '❌ No Gemini API Key'
+        );
+
+        return false;
+      }
+
+      const model =
+        genAI.getGenerativeModel({
+          model: 'gemini-2.5-flash'
+        });
+
+      const result =
+        await model.generateContent(
+          'Say only: Gemini API working'
+        );
+
+      const response =
+        await result.response;
+
+      console.log(
+        response.text()
+      );
+
+      return true;
+
+    } catch (error) {
+
+      console.log(
+        '❌ Gemini Test Failed:',
+        error.message
+      );
+
+      return false;
+    }
 };
