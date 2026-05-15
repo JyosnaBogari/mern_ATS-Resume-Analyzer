@@ -5,7 +5,8 @@ import { extractTextFromBuffer } from "../utils/extractText.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
 import Resume from "../models/Resume.js";
 import { analyzeResume } from "../Services/aiService.js";
-
+import { generateImprovedResume } from "../utils/resumeGenerator.js";
+import { generateResume } from "../controllers/resumeController.js";
 const router = express.Router();
 
 // ✅ Validate if extracted text looks like a resume
@@ -34,6 +35,12 @@ const validateResumeContent = (text) => {
 };
 
 router.post(
+  "/generate",
+  authenticateToken,
+  generateResume
+);
+
+router.post(
   "/upload",
   authenticateToken,
   upload.single("resume"),
@@ -46,7 +53,7 @@ router.post(
       console.log("FILE:", req.file);
       console.log("BODY:", req.body);
 
-      const { targetRole } = req.body;
+     const {targetRole,template} = req.body;
       const userId = req.user.userId;
 
       //  Extract text
@@ -71,15 +78,35 @@ router.post(
       const analysisResult = await analyzeResume(extractedText, targetRole || 'General');
 
       //  Save to DB
-      const newResume = new Resume({
-        user: userId,
-        fileUrl: result.secure_url,
-        extractedText,
-        atsScore: analysisResult.atsScore,
-        suggestions: analysisResult.suggestions,
-        targetRole: targetRole || "General",
-        jobMatchScore: analysisResult.jobMatchScore,
-      });
+    const newResume = new Resume({
+
+  user: userId,
+
+  fileUrl:
+    result.secure_url,
+
+  publicId:
+    result.public_id,
+
+  extractedText,
+
+  atsScore:
+    analysisResult.atsScore,
+
+  suggestions:
+    analysisResult.suggestions,
+
+  targetRole:
+    targetRole || "General",
+
+  jobMatchScore:
+    analysisResult.jobMatchScore,
+
+  improvedResume:
+    analysisResult.improvedResume,
+    template:
+  template || "modern",
+});
 
       await newResume.save();
 
@@ -112,57 +139,116 @@ router.get("/history", authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ Download/Generate Improved Resume
-router.get("/download/:id", authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user.userId;
 
-    const resume = await Resume.findById(id);
-    if (!resume) {
-      return res.status(404).json({ message: "Resume not found" });
+// ✅ Delete Resume
+router.delete(
+  "/delete/:id",
+  authenticateToken,
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params;
+
+      const userId =
+        req.user.userId;
+
+      const resume =
+        await Resume.findById(id);
+
+      if (!resume) {
+
+        return res.status(404).json({
+          message: "Resume not found"
+        });
+      }
+
+      // Ownership check
+      if (
+        resume.user.toString() !== userId
+      ) {
+
+        return res.status(403).json({
+          message: "Unauthorized"
+        });
+      }
+
+      await Resume.findByIdAndDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: "Resume deleted successfully"
+      });
+
+    } catch (err) {
+
+      console.error(
+        "DELETE ERROR:",
+        err
+      );
+
+      res.status(500).json({
+        message:
+          "Failed to delete resume"
+      });
     }
-
-    // Verify ownership
-    if (resume.user.toString() !== userId) {
-      return res.status(403).json({ message: "Unauthorized" });
-    }
-
-    // ✅ Generate improved resume content
-    const improvedContent = generateImprovedResume(resume);
-
-    // Return as PDF
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="improved-resume-${id}.pdf"`);
-    res.send(improvedContent);
-
-  } catch (err) {
-    console.error("DOWNLOAD ERROR:", err);
-    res.status(500).json({ message: err.message });
   }
-});
+);
 
-// ✅ Helper function to generate improved resume content
-const generateImprovedResume = (resume) => {
-  // For now, return a simple text representation
-  // In production, you'd use a PDF library like pdfkit
-  let improved = `IMPROVED RESUME\n`;
-  improved += `==========================================\n\n`;
-  improved += `ATS Score: ${resume.atsScore}%\n`;
-  improved += `Job Match Score: ${resume.jobMatchScore}%\n`;
-  improved += `Target Role: ${resume.targetRole}\n\n`;
-  improved += `AI Suggestions:\n`;
-  resume.suggestions.forEach((sugg, idx) => {
-    improved += `${idx + 1}. ${sugg.title}\n`;
-    improved += `   ${sugg.description}\n\n`;
-  });
-  improved += `Original Resume Content:\n`;
-  improved += `------------------------------------------\n`;
-  improved += resume.extractedText;
+// ✅ Download Improved Resume PDF
+router.get(
+  "/download/:id",
+  authenticateToken,
+  async (req, res) => {
 
-  return Buffer.from(improved);
-};
+    try {
 
+      const { id } = req.params;
+
+      const userId =
+        req.user.userId;
+
+      // Find Resume
+      const resume =
+        await Resume.findById(id);
+
+      if (!resume) {
+
+        return res.status(404).json({
+          message: "Resume not found"
+        });
+      }
+
+      // Ownership Check
+      if (
+        resume.user.toString() !== userId
+      ) {
+
+        return res.status(403).json({
+          message: "Unauthorized"
+        });
+      }
+
+      // ✅ Generate PDF directly
+      await generateImprovedResume(
+        resume,
+        res
+      );
+
+    } catch (err) {
+
+      console.error(
+        "DOWNLOAD ERROR:",
+        err
+      );
+
+      res.status(500).json({
+        message:
+          "Failed to download resume"
+      });
+    }
+  }
+);
 // ✅ Re-analyze with different role
 router.post("/analyze", authenticateToken, async (req, res) => {
   try {

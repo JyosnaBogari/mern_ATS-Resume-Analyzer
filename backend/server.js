@@ -5,7 +5,6 @@ import cors from 'cors';
 import { userRoute } from './APIs/userAPI.js';
 import resumeRoute from './APIs/resumeAPI.js';
 import cookieParser from "cookie-parser";
-
 config();
 //port
 const PORT = process.env.PORT || 3000;
@@ -20,7 +19,7 @@ app.use(cookieParser())
 //routes
 app.use('/user-api', userRoute);
 app.use('/resume-api', resumeRoute);
-
+app.use('/resume-api',resumeRoute);
 
 //connect to DB 
 const connectDB = async () => {

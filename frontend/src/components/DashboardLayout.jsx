@@ -4,19 +4,19 @@ import DashboardSidebar from "./DashboardSideBar";
 
 function DashboardLayout() {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex min-h-screen flex-col bg-[#f8f9fb]">
 
       {/* Header */}
       <DashboardHeader />
 
       {/* Body */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col md:flex-row md:items-start">
 
         {/* Sidebar */}
-        <DashboardSidebar/>
+        <DashboardSidebar />
 
         {/* Page Content */}
-        <div className="flex-1 p-6 bg-gray-100 overflow-auto">
+        <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-auto">
           <Outlet />
         </div>
 

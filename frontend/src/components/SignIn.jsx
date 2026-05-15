@@ -30,16 +30,19 @@ function SignIn() {
     }
   },[isAuthenticated,currentUser])
   return (
-  <div className={pageBackground + " flex justify-center items-center"}>
-        
+  <div className={pageBackground + " flex items-center justify-center px-4 py-12"}>
     <form
       onSubmit={handleSubmit(onUserLogin)}
-      className={formCard}
+      className={formCard + " max-w-md"
+      }
     >
 
       <h2 className={formTitle}>
-        Login
+        Welcome back
       </h2>
+      <p className="text-center text-sm text-[#6e6e73] mb-6">
+        Sign in to access your ATS resume tools and history.
+      </p>
 
       {/* Select Role */}
       {error && <p className={errorClass}>{error}</p>}
@@ -86,7 +89,7 @@ function SignIn() {
         type="submit"
         className={submitBtn}
       >
-        Login
+        Sign In
       </button>
 
     </form>

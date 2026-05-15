@@ -14,10 +14,10 @@ function HistoryFilters({ onFilterChange, className = '' }) {
   };
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg p-4 mb-6 ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={`bg-white border border-[#e8ebf2] rounded-[28px] p-6 mb-6 shadow-sm ${className}`}>
+      <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-[#4f5666] mb-2">
             Search
           </label>
           <input
@@ -25,7 +25,7 @@ function HistoryFilters({ onFilterChange, className = '' }) {
             placeholder="Search by filename or role..."
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full rounded-2xl border border-[#dce2eb] bg-[#f8f9fb] px-4 py-3 text-sm text-[#1d1d1f] focus:outline-none focus:border-[#0066cc] focus:ring-2 focus:ring-[#0066cc]/10"
           />
         </div>
 

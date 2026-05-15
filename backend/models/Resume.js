@@ -1,17 +1,66 @@
 import mongoose from 'mongoose';
 
 const resumeSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  fileUrl: { type: String, required: true },
-  extractedText: { type: String, default: "" },
-  atsScore: { type: Number, default: 0 },
-  suggestions: [{
-    title: { type: String },
-    description: { type: String }
-  }],
-  targetRole: { type: String, default: "General" },
-  jobMatchScore: { type: Number, default: 0 },
-  improvedResumeUrl: { type: String, default: "" },
+
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+
+  fileUrl: {
+    type: String,
+    required: true
+  },
+
+  publicId: {
+    type: String,
+    default: ""
+  },
+
+  extractedText: {
+    type: String,
+    default: ""
+  },
+
+  atsScore: {
+    type: Number,
+    default: 0
+  },
+
+  suggestions: [
+    {
+      title: String,
+      description: String
+    }
+  ],
+
+  targetRole: {
+    type: String,
+    default: "General"
+  },
+
+  jobMatchScore: {
+    type: Number,
+    default: 0
+  },
+
+  // ✅ NEW FIELD
+  improvedResume: {
+    type: String,
+    default: ""
+  },
+template: {
+  type: String,
+  default: "modern"
+},
+  improvedResumeUrl: {
+    type: String,
+    default: ""
+  },
 }, { timestamps: true });
 
-export default mongoose.model('Resume', resumeSchema);
+export default mongoose.model(
+  'Resume',
+  resumeSchema
+);

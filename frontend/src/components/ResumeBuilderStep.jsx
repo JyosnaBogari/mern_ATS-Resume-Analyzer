@@ -53,7 +53,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
   };
 
   const renderPersonalInfo = () => (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className={formGroup}>
           <label className={labelClass}>First Name</label>
@@ -113,7 +113,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
       <textarea
         value={data.summary}
         onChange={(e) => handleInputChange('summary', e.target.value)}
-        className={inputClass}
+        className={inputClass + " min-h-[180px]"}
         rows={6}
         placeholder="Write a brief summary of your professional background and career goals..."
       />
@@ -123,7 +123,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
   const renderExperience = () => (
     <div className="space-y-4">
       {experience.map((exp, index) => (
-        <div key={index} className="border border-gray-200 rounded-lg p-4">
+        <div key={index} className="rounded-3xl border border-[#e8edf4] bg-[#f8f9fb] p-5 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -145,13 +145,13 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
             placeholder="Duration (e.g., Jan 2020 - Present)"
             value={exp.duration}
             onChange={(e) => updateExperience(index, 'duration', e.target.value)}
-            className={inputClass + " mt-2"}
+            className={inputClass + " mt-3"}
           />
           <textarea
             placeholder="Job description and achievements"
             value={exp.description}
             onChange={(e) => updateExperience(index, 'description', e.target.value)}
-            className={inputClass + " mt-2"}
+            className={inputClass + " mt-3"}
             rows={3}
           />
         </div>
@@ -159,7 +159,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
       <button
         type="button"
         onClick={addExperience}
-        className="w-full py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+        className="w-full inline-flex justify-center items-center gap-2 rounded-2xl border border-[#d5dae3] bg-white px-4 py-3 text-sm font-semibold text-[#1d1d1f] hover:bg-[#f7f8fa] transition duration-200"
       >
         + Add Work Experience
       </button>
@@ -169,7 +169,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
   const renderEducation = () => (
     <div className="space-y-4">
       {education.map((edu, index) => (
-        <div key={index} className="border border-gray-200 rounded-lg p-4">
+        <div key={index} className="rounded-3xl border border-[#e8edf4] bg-[#f8f9fb] p-5 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -198,7 +198,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
       <button
         type="button"
         onClick={addEducation}
-        className="w-full py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+        className="w-full inline-flex justify-center items-center gap-2 rounded-2xl border border-[#d5dae3] bg-white px-4 py-3 text-sm font-semibold text-[#1d1d1f] hover:bg-[#f7f8fa] transition duration-200"
       >
         + Add Education
       </button>
@@ -220,7 +220,7 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
       <button
         type="button"
         onClick={addSkill}
-        className="w-full py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+        className="w-full inline-flex justify-center items-center gap-2 rounded-2xl border border-[#d5dae3] bg-white px-4 py-3 text-sm font-semibold text-[#1d1d1f] hover:bg-[#f7f8fa] transition duration-200"
       >
         + Add Skill
       </button>

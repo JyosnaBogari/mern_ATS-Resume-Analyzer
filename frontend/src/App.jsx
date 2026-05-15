@@ -12,7 +12,6 @@ import DashboardUploadResume from "./components/DashboardUploadResume";
 import DashboardHeader from "./components/DashnoardHeader";
 import ResumeHistory from "./components/ResumeHistory";
 import AnalysisResults from "./components/AnalysisResults";
-import ResumeBuilder from "./components/ResumeBuilder";
 import ResumeContextProvider from "./contexts/ResumeContextProvider";
 
 function App() {
@@ -58,7 +57,7 @@ function App() {
             },
             {
               path: "create-resume",
-              element: <ResumeBuilder />
+              element: <CreateResume />
             },
             {
               path: "history",

@@ -21,37 +21,40 @@ function DashboardSidebar() {
 
 
     return (
-        <div className="w-64 bg-[#f5f5f7] text-[#1d1d1f] flex flex-col p-4 gap-4 border-r border-[#d2d2d7]">
-            <nav>
-                <ul className="flex flex-col gap-4">
-                <li>
-                    <NavLink to="/dashboard" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass} >
-                        Dashboard
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/dashboard/upload-resume" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass} >
-                        Upload Resume
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/dashboard/create-resume" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass}>
-                        Create Resume
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/dashboard/history" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass}>
-                        Resume History
-                    </NavLink>
-                </li>
-                <li>
-                    <button onClick={SignOut} className={secondaryBtn + " w-full text-left"}>
-                        Logout
-                    </button>
-                </li>
-                </ul>
-            </nav>
-        </div>
+        <div className="w-full md:w-72 bg-white text-[#1d1d1f] flex flex-col p-5 gap-5 border-r border-[#e8ebf2] shadow-sm md:sticky md:top-24 md:self-start md:max-h-[calc(100vh-6rem)] md:overflow-y-auto">
+      <div className="rounded-3xl bg-[#f8f9fb] p-4 text-center">
+        <h2 className="text-lg font-semibold text-[#1d1d1f]">Dashboard Menu</h2>
+      </div>
+      <nav>
+        <ul className="flex flex-col gap-3">
+          <li>
+            <NavLink to="/dashboard" className={({ isActive }) => isActive ? `${navLinkActiveClass} block rounded-2xl px-4 py-3 bg-[#eaf3ff]` : `${navLinkClass} block rounded-2xl px-4 py-3 hover:bg-[#f4f7fb]`}>
+              Dashboard
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/upload-resume" className={({ isActive }) => isActive ? `${navLinkActiveClass} block rounded-2xl px-4 py-3 bg-[#eaf3ff]` : `${navLinkClass} block rounded-2xl px-4 py-3 hover:bg-[#f4f7fb]`}>
+              Upload Resume
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/create-resume" className={({ isActive }) => isActive ? `${navLinkActiveClass} block rounded-2xl px-4 py-3 bg-[#eaf3ff]` : `${navLinkClass} block rounded-2xl px-4 py-3 hover:bg-[#f4f7fb]`}>
+              Create Resume
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/history" className={({ isActive }) => isActive ? `${navLinkActiveClass} block rounded-2xl px-4 py-3 bg-[#eaf3ff]` : `${navLinkClass} block rounded-2xl px-4 py-3 hover:bg-[#f4f7fb]`}>
+              Resume History
+            </NavLink>
+          </li>
+          <li>
+            <button onClick={SignOut} className={secondaryBtn + " w-full text-left"}>
+              Logout
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
     );
 }
 

@@ -22,17 +22,23 @@ function AnalysisResults({ className = '' }) {
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <div className={cardClass}>
-        <h2 className={headingClass + " mb-6"}>Resume Analysis Results</h2>
+      <div className={cardClass + " p-8"}>
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className={headingClass}>Resume Analysis Results</h2>
+            <p className="mt-2 text-sm text-[#6e6e73] max-w-2xl">A clear summary of your ATS score, job match strength, and actionable suggestions.</p>
+          </div>
+          <div className="rounded-3xl bg-[#f4f8ff] px-4 py-3 text-sm font-semibold text-[#004499] shadow-sm">Score: {atsScore || 0}%</div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="flex justify-center">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr] mb-6">
+          <div className="flex justify-center rounded-3xl bg-[#f8fafe] p-6">
             <ScoreVisualization score={atsScore || 0} />
           </div>
 
           <div className="space-y-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2">Job Match Score</h3>
+            <div className="rounded-3xl border border-[#e8ebf2] bg-[#f8f9fb] p-5">
+              <h3 className="font-semibold text-[#1d1d1f] mb-2">Job Match Score</h3>
               <div className="flex items-center">
                 <div className="flex-1 bg-gray-200 rounded-full h-2 mr-4">
                   <div

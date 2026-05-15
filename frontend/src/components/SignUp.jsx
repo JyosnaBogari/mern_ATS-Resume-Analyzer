@@ -38,14 +38,15 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen bg-[#f8f9fb] px-4 py-10 flex items-center justify-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md space-y-5"
+        className="w-full max-w-lg rounded-[28px] border border-[#e8ebf2] bg-white p-8 shadow-sm space-y-6"
       >
-        <h1 className="text-3xl font-bold text-center text-gray-800">
-          Register
-        </h1>
+        <div>
+          <h1 className="text-3xl font-semibold text-[#1d1d1f] text-center">Create your account</h1>
+          <p className="mt-2 text-sm text-[#6e6e73] text-center">Start building ATS-optimized resumes in minutes.</p>
+        </div>
 
         <input
           type="text"
@@ -108,9 +109,9 @@ function Register() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition duration-300"
+          className="w-full rounded-2xl bg-[#0066cc] px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-[#004499]"
         >
-          Register
+          Create Account
         </button>
       </form>
     </div>

@@ -12,12 +12,13 @@ import { toast } from "react-hot-toast";
 
 function DashboardUploadResume() {
   const [selectedRole, setSelectedRole] = useState("");
+  const [template, setTemplate] =useState("modern");
   const { uploadResume, loading, error, clearError } = useResumeStore();
   const navigate = useNavigate();
 
   const { handleSubmit, register, formState: { errors }, setValue } = useForm();
-
   const formSubmit = async (data) => {
+
     const selectedFile = data.file[0];
 
     if (!selectedFile) {
@@ -25,41 +26,68 @@ function DashboardUploadResume() {
       return;
     }
 
-    if (!selectedRole) {
-      toast.error("Please select a target job role");
-      return;
-    }
-
     const validation = validateFile(selectedFile);
+
     if (!validation.isValid) {
       toast.error(validation.error);
       return;
     }
 
     try {
-      clearError();
-      const formData = new FormData();
-      formData.append("resume", selectedFile);
-      formData.append("targetRole", selectedRole);
 
-      const result = await uploadResume(formData);
+      clearError();
+
+     const formData = new FormData();
+
+formData.append(
+  "resume",
+  selectedFile
+);
+
+// OPTIONAL ROLE
+formData.append(
+  "targetRole",
+  selectedRole || "General"
+);
+
+// TEMPLATE
+formData.append(
+  "template",
+  template
+);
+
+      const result =
+        await uploadResume(formData);
 
       if (result) {
-        toast.success("Resume uploaded and analyzed successfully!");
+
+        toast.success(
+          selectedRole
+            ? "Role-based resume analysis completed!"
+            : "General ATS analysis completed!"
+        );
+
         navigate("/dashboard/analysis");
       }
+
     } catch (err) {
-      toast.error("Upload failed. Please try again.");
+
+      toast.error(
+        "Upload failed. Please try again."
+      );
     }
   };
 
   return (
-    <div className={pageBackground + " flex justify-center items-center min-h-screen"}>
+    <div className={pageBackground + " px-4 py-10"}>
       <form
         onSubmit={handleSubmit(formSubmit)}
-        className={formCard + " max-w-md"}
+        className={formCard + " max-w-2xl"}
       >
-        <h1 className={formTitle}>Upload Your Resume</h1>
+        <h1 className={formTitle}>ATS Resume Analyzer</h1>
+        <p className="text-center text-sm text-[#6e6e73] mb-6">
+          Upload a resume and choose a template to generate a polished, ATS-ready version.
+        </p>
 
         <ErrorMessage message={error} />
 
@@ -68,7 +96,7 @@ function DashboardUploadResume() {
           onRoleChange={setSelectedRole}
           className="mb-4"
         />
-
+        <p className="text-sm text-gray-500 mb-4">Optional: Select a target role for role-based resume analysis.</p>
         <div className={formGroup}>
           <label className={labelClass} htmlFor="file">Resume File</label>
           <input
@@ -87,6 +115,38 @@ function DashboardUploadResume() {
         <p className="text-sm text-gray-600 mb-4">
           <span className={subHeadingClass}>Max File Size:</span> 2MB
         </p>
+        
+        <div className="mb-4">
+  <label className="block text-sm font-semibold mb-2">
+    Resume Template
+  </label>
+
+  <select
+    value={template}
+    onChange={(e) =>
+      setTemplate(e.target.value)
+    }
+    className="
+      w-full
+      border
+      border-gray-300
+      rounded-lg
+      px-4
+      py-3
+      focus:outline-none
+      focus:ring-2
+      focus:ring-blue-500
+    "
+  >
+    <option value="modern">
+      Modern Blue
+    </option>
+
+    <option value="sidebar">
+      Sidebar Dark
+    </option>
+  </select>
+</div>
 
         <button
           type="submit"

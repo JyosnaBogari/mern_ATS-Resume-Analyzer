@@ -159,11 +159,16 @@ export const analyzeResume = async (
         targetRole,
         atsScore
       );
-
+      const improvedResume =
+  await generateImprovedResume(
+    resumeText,
+    targetRole
+  );
     return {
       atsScore,
       jobMatchScore,
-      suggestions
+      suggestions,
+      improvedResume
     };
 
   } catch (error) {
@@ -262,15 +267,39 @@ const calculateJobMatchScore = (
   targetRole
 ) => {
 
-  if (targetRole === 'General') {
-    return 50;
+  const lowerText =
+    text.toLowerCase();
+
+  // GENERAL ANALYSIS
+  if (
+    !targetRole ||
+    targetRole === 'General'
+  ) {
+
+    let generalScore = 0;
+
+    if (lowerText.includes('skills'))
+      generalScore += 20;
+
+    if (lowerText.includes('projects'))
+      generalScore += 20;
+
+    if (lowerText.includes('education'))
+      generalScore += 20;
+
+    if (lowerText.includes('experience'))
+      generalScore += 20;
+
+    if (text.length > 800)
+      generalScore += 20;
+
+    return generalScore;
   }
+
+  // ROLE-BASED ANALYSIS
 
   const keywords =
     jobKeywords[targetRole] || [];
-
-  const lowerText =
-    text.toLowerCase();
 
   if (keywords.length === 0) {
     return 0;
@@ -301,7 +330,6 @@ const calculateJobMatchScore = (
 /* =========================================================
    GEMINI AI SUGGESTIONS
 ========================================================= */
-
 const generateAISuggestions = async (
   resumeText,
   targetRole,
@@ -317,27 +345,27 @@ const generateAISuggestions = async (
 
       return [
         {
-          title: 'Gemini API Missing',
-
+          title: "Gemini API Missing",
           description:
-            'GEMINI_API_KEY not found in .env'
+            "Gemini API key not found."
         }
       ];
     }
 
     console.log(
-      '📤 Sending request to Gemini...'
+      "📤 Sending request to Gemini..."
     );
 
+    // ONLY WORKING MODEL
     const model =
       genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash'
+        model: "gemini-2.5-flash"
       });
 
     const prompt = `
-You are an ATS Resume Analyzer.
+You are an advanced ATS Resume Analyzer.
 
-Analyze this resume carefully.
+Analyze the resume professionally.
 
 Target Role:
 ${targetRole}
@@ -345,16 +373,19 @@ ${targetRole}
 Current ATS Score:
 ${currentScore}/100
 
-Resume:
-${resumeText.substring(0, 3000)}
+Resume Content:
+${resumeText.substring(0, 3500)}
 
 Instructions:
-- Give ONLY resume-specific suggestions
-- Do NOT give generic suggestions
-- Mention missing skills
-- Mention weak projects
-- Mention formatting issues
+
+- Give professional ATS feedback
+- Mention formatting improvements
+- Mention missing technical skills
 - Mention ATS keyword improvements
+- Mention project improvements
+- Mention grammar issues if present
+- Keep suggestions concise
+- Avoid generic suggestions
 
 Return ONLY valid JSON.
 
@@ -380,40 +411,127 @@ Format:
       response.text();
 
     console.log(
-      '✅ Gemini Raw Response:'
+      "✅ Gemini Suggestions Generated"
     );
-
-    console.log(text);
 
     const cleaned =
       text
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
         .trim();
 
-    const suggestions =
-      JSON.parse(cleaned);
-
-    return suggestions;
+    return JSON.parse(cleaned);
 
   } catch (error) {
 
     console.log(
-      '❌ Gemini Error:',
+      "❌ Gemini Suggestions Error:",
       error.message
     );
 
+    // HIGH DEMAND / TEMPORARY ERROR
+    if (
+      error.message.includes("503") ||
+      error.message.includes("high demand")
+    ) {
+
+      return [
+        {
+          title: "Gemini Busy",
+          description:
+            "Gemini AI is currently under heavy load. Please try again in a few seconds."
+        }
+      ];
+    }
+
     return [
       {
-        title: 'Gemini Error',
-
+        title: "AI Analysis Failed",
         description:
-          'Failed to generate AI suggestions.'
+          "Unable to generate AI suggestions right now."
       }
     ];
   }
 };
+/* =========================================================
+   GENERATE IMPROVED RESUME
+========================================================= */
+const generateImprovedResume = async (
+  resumeText,
+  targetRole
+) => {
 
+  try {
+
+    const genAI =
+      getGeminiInstance();
+
+    if (!genAI) {
+      return "";
+    }
+
+    const model =
+      genAI.getGenerativeModel({
+        model: "gemini-2.5-flash"
+      });
+
+    const prompt = `
+You are a professional ATS resume writer.
+
+Rewrite and improve this resume professionally.
+
+STRICT RULES:
+
+- ATS optimized
+- Professional formatting
+- Strong action verbs
+- Better wording
+- Keep original truthful information
+- No fake experience
+- No fake skills
+
+DO NOT INCLUDE:
+
+- ATS Score
+- Job Match Score
+- Improved Resume Content
+
+Target Role:
+${targetRole}
+
+Resume:
+${resumeText}
+
+Return ONLY the improved resume.
+`;
+
+    const result =
+      await model.generateContent(
+        prompt
+      );
+
+    const response =
+      await result.response;
+
+    const improved =
+      response.text();
+
+    console.log(
+      "✅ Improved Resume Generated"
+    );
+
+    return improved;
+
+  } catch (error) {
+
+    console.log(
+      "❌ Improved Resume Error:",
+      error.message
+    );
+
+    return "";
+  }
+};
 /* =========================================================
    GEMINI TEST
 ========================================================= */
@@ -463,4 +581,4 @@ export const testGeminiConnection =
 
       return false;
     }
-};
+  };

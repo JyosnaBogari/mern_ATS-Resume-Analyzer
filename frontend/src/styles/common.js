@@ -1,63 +1,53 @@
 // src/styles/common.js
-// Theme: Apple Light — white/f5f5f7 background, #1d1d1f text, #0066cc accent
-// Inspired by apple.com — no gradients, no shadows, pure typography & spacing
+// Theme: Premium Apple-inspired UI with crisp whites, soft blues, and subtle shadows.
 
-// ─── Layout ───────────────────────────────────────────
-export const pageBackground = "bg-white min-h-screen"
-export const pageWrapper    = "max-w-5xl mx-auto px-6 py-16"
-export const section        = "mb-14"
+// --- Layout -------------------------------------------
+export const pageBackground = "bg-[#f8f9fb] min-h-screen text-[#1d1d1f]"
+export const pageWrapper = "max-w-6xl mx-auto px-4 py-8 md:px-6 lg:px-8"
+export const section = "mb-14"
 
-// ─── Cards ────────────────────────────────────────────
-export const cardClass      = "bg-[#f5f5f7] rounded-2xl p-7 hover:bg-[#ebebf0] transition-colors duration-200 cursor-pointer"
+// --- Cards --------------------------------------------
+export const cardClass = "bg-white border border-[#e8ebf2] rounded-[28px] p-6 shadow-sm transition duration-300 hover:shadow-lg hover:border-[#dbe1ea]"
 
-// ─── Typography ───────────────────────────────────────
-export const pageTitleClass = "text-5xl font-bold text-[#1d1d1f] tracking-tight leading-none mb-2"
-export const headingClass   = "text-2xl font-bold text-[#1d1d1f] tracking-tight"
-export const subHeadingClass= "text-1xl font-semibold text-[#1d1d1f] tracking-tight"
-export const bodyText       = "text-[#6e6e73] leading-relaxed"
-export const mutedText      = "text-sm text-[#a1a1a6]"
-export const linkClass      = "text-[#0066cc] hover:text-[#004499] transition-colors"
+// --- Typography ---------------------------------------
+export const pageTitleClass = "text-4xl sm:text-5xl font-semibold text-[#1d1d1f] tracking-tight leading-tight mb-3"
+export const headingClass = "text-3xl sm:text-4xl font-semibold text-[#1d1d1f] tracking-tight"
+export const subHeadingClass = "text-lg sm:text-xl font-semibold text-[#1d1d1f] tracking-tight"
+export const bodyText = "text-[#52555e] leading-relaxed"
+export const mutedText = "text-sm text-[#7b7f89]"
+export const linkClass = "text-[#0066cc] hover:text-[#004499] transition duration-200"
 
-// ─── Buttons ──────────────────────────────────────────
-export const primaryBtn     = "bg-[#0066cc] text-white font-semibold px-5 py-2 rounded-full hover:bg-[#004499] transition-colors cursor-pointer text-sm tracking-tight"
-export const secondaryBtn   = "border border-[#d2d2d7] text-[#1d1d1f] font-medium px-5 py-2 rounded-full hover:bg-[#f5f5f7] transition-colors cursor-pointer text-sm"
-export const ghostBtn       = "text-[#0066cc] font-medium hover:text-[#004499] transition-colors cursor-pointer text-sm"
+// --- Buttons ------------------------------------------
+export const primaryBtn = "inline-flex items-center justify-center bg-[#0066cc] text-white font-semibold px-5 py-3 rounded-2xl hover:bg-[#004499] transition duration-200 shadow-sm"
+export const secondaryBtn = "inline-flex items-center justify-center border border-[#d5dae3] text-[#1d1d1f] bg-white px-5 py-3 rounded-2xl hover:border-[#bac7d9] hover:bg-[#f7f8fa] transition duration-200 shadow-sm"
+export const ghostBtn = "text-[#0066cc] font-medium hover:text-[#004499] transition duration-200"
 
-// ─── Forms ────────────────────────────────────────────
-export const formCard       = "bg-[#f5f5f7] rounded-2xl p-10 max-w-md mx-auto"
-export const formTitle      = "text-2xl font-bold text-[#1d1d1f] tracking-tight text-center mb-7"
-export const labelClass     = "text-xs font-medium text-[#6e6e73] mb-1.5 block"
-export const inputClass     = "w-full bg-white border border-[#d2d2d7] rounded-xl px-4 py-2.5 text-[#1d1d1f] text-sm placeholder:text-[#a1a1a6] focus:outline-none focus:border-[#0066cc] focus:ring-2 focus:ring-[#0066cc]/10 transition"
-export const formGroup      = "mb-4"
-export const submitBtn      = "w-full bg-[#0066cc] text-white font-semibold py-2.5 rounded-full hover:bg-[#004499] transition-colors cursor-pointer mt-2 text-sm tracking-tight"
-// ─── Navbar ───────────────────────────────────────────
-export const navbarClass        = "bg-white/85 backdrop-blur-xl backdrop-saturate-150 border-b border-[#e8e8ed] px-8 h-[52px] flex items-center sticky top-0 z-50";
-export const navContainerClass  = "max-w-5xl mx-auto w-full flex items-center justify-between"; // 👈 handles logo left + links right
-export const navBrandClass      = "text-2xl font-semibold tracking-tight";
-export const navLinksClass      = "flex items-center gap-7";
-export const navLinkClass       = "text-[1.2rem] text-[#6e6e73] hover:text-[#1d1d1f] transition-colors font-normal";
-export const navLinkActiveClass = "text-[1rem] text-[#0066cc] font-medium";
-export const navLinkActiveButtonClass = "text-[1rem] text-[#0066cc] font-medium bg-blue-500 text-white p-2 rounded cursor-pointer";
+// --- Forms ------------------------------------------
+export const formCard = "bg-white rounded-[32px] p-10 max-w-lg mx-auto shadow-sm border border-[#e8ebf2]"
+export const formTitle = "text-3xl sm:text-4xl font-semibold text-[#1d1d1f] leading-tight text-center mb-8"
+export const labelClass = "text-sm font-medium text-[#6e6e73] mb-2 block"
+export const inputClass = "w-full bg-[#f8f9fb] border border-[#dae1ea] rounded-2xl px-4 py-3 text-[#1d1d1f] text-sm placeholder:text-[#9ea4b2] focus:outline-none focus:border-[#0066cc] focus:ring-2 focus:ring-[#0066cc]/10 transition duration-200"
+export const formGroup = "mb-5"
+export const submitBtn = "w-full inline-flex justify-center items-center bg-[#0066cc] text-white font-semibold py-3 rounded-2xl hover:bg-[#004499] transition duration-200 shadow-sm"
 
-// ─── Article / Blog ───────────────────────────────────
-export const productGrid        = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2px border-[#e8e8ed] rounded-2xl overflow-hidden m-5 p-5 "
-export const productCardClass   = " p-7 hover:bg-[#ebebf0] transition-colors duration-200 flex flex-col gap-2.5 cursor-pointer rounded-2xl p-2"
-export const productTitle       = "text-base font-semibold text-[#1d1d1f] leading-snug tracking-tight"
-export const productExcerpt     = "text-sm text-[#6e6e73] leading-relaxed"
-export const productMeta        = "text-xs text-[#a1a1a6]"
-export const productBody        = "text-[#6e6e73] leading-[1.85] text-[0.95rem] max-w-2xl"
-export const timestampClass     = "text-xs text-[#a1a1a6] flex items-center gap-1.5"
-export const tagClass           = "text-[0.65rem] font-semibold text-[#0066cc] uppercase tracking-widest w-fit"
+// --- Navbar -------------------------------------------
+export const navbarClass = "bg-white/95 backdrop-blur-xl border-b border-[#e8ebf2] px-4 md:px-8 py-3 sticky top-0 z-50 shadow-sm"
+export const navContainerClass = "max-w-6xl mx-auto w-full flex items-center justify-between gap-4"
+export const navBrandClass = "text-2xl sm:text-3xl font-semibold tracking-tight"
+export const navLinksClass = "flex items-center gap-4 flex-wrap"
+export const navLinkClass = "text-sm text-[#6e6e73] hover:text-[#1d1d1f] transition duration-200"
+export const navLinkActiveClass = "text-sm text-[#0066cc] font-semibold"
+export const navLinkActiveButtonClass = "text-sm text-[#0066cc] font-semibold bg-[#eaf3ff] px-4 py-2 rounded-2xl"
 
-// ─── Feedback ─────────────────────────────────────────
-export const errorClass         = "bg-[#ff3b30]/[0.06] text-[#cc2f26] border border-[#ff3b30]/[0.18] rounded-xl px-4 py-3 text-sm"
-export const successClass       = "bg-[#34c759]/[0.07] text-[#248a3d] border border-[#34c759]/20 rounded-xl px-4 py-3 text-sm"
-export const loadingClass       = "text-[#0066cc]/60 text-sm animate-pulse text-center py-10"
-export const emptyStateClass    = "text-center text-[#a1a1a6] py-16 text-sm"
+// --- Feedback -----------------------------------------
+export const errorClass = "bg-[#fff2f2] text-[#b91c1c] border border-[#fecaca] rounded-2xl px-4 py-3 text-sm"
+export const successClass = "bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] rounded-2xl px-4 py-3 text-sm"
+export const loadingClass = "text-[#0066cc]/70 text-sm animate-pulse text-center py-10"
+export const emptyStateClass = "text-center text-[#7b7f89] py-16 text-sm"
 
-// ─── Divider ──────────────────────────────────────────
-export const divider            = "border-t border-[#e8e8ed] my-10"
+// --- Divider ------------------------------------------
+export const divider = "border-t border-[#e8ebf2] my-10"
 
-//product 
-export const productImage="w-32 h-32 object-contain mx-auto"
-export const productName="text-lg font-bold"
+// Product helpers
+export const productImage = "w-32 h-32 object-contain mx-auto"
+export const productName = "text-lg font-bold"

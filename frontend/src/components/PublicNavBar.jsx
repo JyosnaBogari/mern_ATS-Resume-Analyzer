@@ -23,12 +23,12 @@ function PublicNavBar() {
   return (
      <div className={navbarClass}>
       <div className={navContainerClass }>
-        {/* Logo on the left */}
-        {/* <img src="https://www.brandbucket.com/sites/default/files/logo_uploads/393341/stamped_preview_w7.png" width="50px" alt="logo" /> */}
-          <h1 className={navBrandClass}>ATS Resume Checker</h1>
-        {/* Links on the right */}
+          <div>
+            <h1 className={navBrandClass}>ATS Resume Checker</h1>
+            <p className="text-sm text-[#6e6e73] mt-1 hidden sm:block">Make your resume ATS-friendly with premium AI guidance.</p>
+          </div>
         <nav className={navLinksClass}>
-          <ul className="flex items-center gap-7">
+          <ul className="flex flex-wrap items-center gap-3">
             <li>
               <NavLink to="" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass}>
                 Home
@@ -36,16 +36,18 @@ function PublicNavBar() {
             </li>
             <li>
               <NavLink to="signup" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass}>
-                SignUp
+                Sign Up
               </NavLink>
             </li>
             <li>
               <NavLink to="signin" className={({ isActive }) => isActive ? navLinkActiveClass : navLinkClass}>
-                SignIn
+                Sign In
               </NavLink>
             </li>
             <li>
-              <button onClick={SignIn} className={primaryBtn}>Create Resume</button>
+              <button onClick={SignIn} className={primaryBtn}>
+                Create Resume
+              </button>
             </li>
           </ul>
         </nav>
