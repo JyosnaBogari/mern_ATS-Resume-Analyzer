@@ -34,6 +34,7 @@ const formatContentText = (value) => {
 };
 
 let currentContent = null;
+let sidebarRendered = false;
 
 const renderSidebar = (doc, content) => {
   doc
@@ -83,7 +84,9 @@ const renderSidebar = (doc, content) => {
 const ensurePageSpace = (doc, y, requiredHeight) => {
   if (y + requiredHeight > PAGE_BOTTOM) {
     doc.addPage();
-    renderSidebar(doc, currentContent);
+    if (sidebarRendered) {
+      sidebarRendered = false;
+    }
     return PAGE_MARGIN;
   }
   return y;
@@ -131,6 +134,7 @@ const addContentSection = (doc, title, text, x, y) => {
 
 export const generateSidebarTemplate = (doc, content) => {
   currentContent = content;
+  sidebarRendered = true;
   renderSidebar(doc, content);
 
   let x = SIDEBAR_WIDTH + 40;

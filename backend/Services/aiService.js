@@ -481,20 +481,22 @@ You are a professional ATS resume writer.
 Rewrite and improve this resume professionally.
 
 STRICT RULES:
+- Preserve the exact facts from the original resume.
+- Keep original project titles and project descriptions in the PROJECTS section.
+- If a project needs improvement, add suggestions only inside PROJECTS.
+- Do not move project content into SKILLS, EXPERIENCE, EDUCATION, or any other section.
+- Use strong action verbs and ATS-friendly wording.
+- Keep the resume truthful; do not invent any new experience.
+- Do not include any scores, metadata, or analysis in the output.
+- Return plain text only, without markdown formatting, code fences, or JSON.
 
-- ATS optimized
-- Professional formatting
-- Strong action verbs
-- Better wording
-- Keep original truthful information
-- No fake experience
-- No fake skills
-
-DO NOT INCLUDE:
-
-- ATS Score
-- Job Match Score
-- Improved Resume Content
+Use the following exact section headings in uppercase, each on its own line:
+SUMMARY
+SKILLS
+EXPERIENCE
+EDUCATION
+PROJECTS
+CERTIFICATIONS
 
 Target Role:
 ${targetRole}
@@ -502,7 +504,7 @@ ${targetRole}
 Resume:
 ${resumeText}
 
-Return ONLY the improved resume.
+Return ONLY the improved resume with the exact headings above.
 `;
 
     const result =
@@ -516,11 +518,15 @@ Return ONLY the improved resume.
     const improved =
       response.text();
 
+    const cleaned = improved
+      .replace(/```(?:[a-z]*)?/gi, "")
+      .trim();
+
     console.log(
       "✅ Improved Resume Generated"
     );
 
-    return improved;
+    return cleaned;
 
   } catch (error) {
 

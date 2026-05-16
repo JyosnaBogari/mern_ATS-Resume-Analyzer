@@ -302,7 +302,7 @@ function ResumeHistory() {
 
                 <div className="flex gap-2 flex-wrap">
 
-                  {/* ✅ VIEW ORIGINAL */}
+                  {/* ✅ VIEW ORIGINAL
                   <button
                     onClick={() => {
 
@@ -314,12 +314,34 @@ function ResumeHistory() {
 
                       window.open(
                         resume.fileUrl,
-                        "_blank"
+                        "_blank",
+                        "noopener,noreferrer"
                       );
                     }}
                     className={primaryBtn}
                   >
                     View Original
+                  </button> */}
+
+                  {/* ✅ VIEW IMPROVED */}
+                  <button
+                    onClick={() => {
+                      if (!resume.improvedResume) {
+                        alert("Improved resume is not available yet.");
+                        return;
+                      }
+
+                      const blob = new Blob(
+                        [resume.improvedResume],
+                        { type: 'text/plain' }
+                      );
+                      const url = window.URL.createObjectURL(blob);
+                      window.open(url, '_blank', 'noopener,noreferrer');
+                      setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+                    }}
+                    className={secondaryBtn + " text-sm px-3 py-1"}
+                  >
+                    View Improved
                   </button>
 
                   {/* ✅ DOWNLOAD IMPROVED */}

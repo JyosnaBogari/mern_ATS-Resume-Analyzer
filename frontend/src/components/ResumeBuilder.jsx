@@ -41,7 +41,7 @@ const steps = [
 ];
 
 function ResumeBuilder({
-  onSave = () => {},
+  onSave = () => { },
   className = '',
   isSaving = false
 }) {
@@ -65,7 +65,17 @@ function ResumeBuilder({
 
   const handleNext = () => {
 
+    const isValid = validateCurrentStep();
+
+    if (!isValid) {
+
+      alert("Please fill all required fields before continuing.");
+
+      return;
+    }
+
     if (currentStep < steps.length) {
+
       setCurrentStep(currentStep + 1);
     }
   };
@@ -87,6 +97,70 @@ function ResumeBuilder({
       [field]: value,
     }));
   };
+
+  // for validation of the fields
+  const validateCurrentStep = () => {
+
+  // STEP 1 → PERSONAL INFO
+  if (currentStep === 1) {
+
+    return (
+      resumeData.firstName.trim() !== '' &&
+      resumeData.lastName.trim() !== '' &&
+      resumeData.email.trim() !== '' &&
+      resumeData.phone.trim() !== '' &&
+      resumeData.address.trim() !== ''
+    );
+  }
+
+  // STEP 2 → SUMMARY
+  if (currentStep === 2) {
+
+    return resumeData.summary.trim() !== '';
+  }
+
+  // STEP 3 → EXPERIENCE
+  if (currentStep === 3) {
+
+    return (
+      resumeData.experience.length > 0 &&
+      resumeData.experience.every(
+        exp =>
+          exp.company?.trim() &&
+          exp.position?.trim() &&
+          exp.duration?.trim() &&
+          exp.description?.trim()
+      )
+    );
+  }
+
+  // STEP 4 → EDUCATION
+  if (currentStep === 4) {
+
+    return (
+      resumeData.education.length > 0 &&
+      resumeData.education.every(
+        edu =>
+          edu.institution?.trim() &&
+          edu.degree?.trim() &&
+          edu.year?.trim()
+      )
+    );
+  }
+
+  // STEP 5 → SKILLS
+  if (currentStep === 5) {
+
+    return (
+      resumeData.skills.length > 0 &&
+      resumeData.skills.every(
+        skill => skill.trim() !== ''
+      )
+    );
+  }
+
+  return true;
+};
 
   const handleSave = () => {
     onSave(resumeData);
@@ -111,29 +185,28 @@ function ResumeBuilder({
         <div className="mb-8">
 
           <div className="flex flex-col gap-4 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-            {steps.map((step) => (
-              <div
-                key={step.id}
-                className={`rounded-2xl py-3 px-3 text-xs font-semibold uppercase tracking-[0.12em] text-center transition duration-200 ${
-                  step.id <= currentStep
-                    ? 'bg-[#e5f0ff] text-[#004499] shadow-sm'
-                    : 'bg-[#f4f6f9] text-[#8c95a2]'
-                }`}
-              >
-                {step.title}
-              </div>
-            ))}
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+              {steps.map((step) => (
+                <div
+                  key={step.id}
+                  className={`rounded-2xl py-3 px-3 text-xs font-semibold uppercase tracking-[0.12em] text-center transition duration-200 ${step.id <= currentStep
+                      ? 'bg-[#e5f0ff] text-[#004499] shadow-sm'
+                      : 'bg-[#f4f6f9] text-[#8c95a2]'
+                    }`}
+                >
+                  {step.title}
+                </div>
+              ))}
+            </div>
 
-          <div className="w-full bg-[#e7ecf4] rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-[#0066cc] h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / steps.length) * 100}%` }}
-            />
+            <div className="w-full bg-[#e7ecf4] rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-[#0066cc] h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
         {/* Current Step */}
 
@@ -143,77 +216,81 @@ function ResumeBuilder({
           onDataChange={handleDataChange}
         />
 
+
+
         {/* Template Selection */}
 
-        <div className="mt-8">
+        {currentStep === 5 && (
 
-          <h3 className="text-lg font-semibold mb-4">
-            Choose Resume Template
-          </h3>
+          <div className="mt-8">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-lg font-semibold mb-4">
+              Choose Resume Template
+            </h3>
 
-            {/* MODERN TEMPLATE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <div
-              onClick={() =>
-                handleDataChange(
-                  'template',
-                  'modern'
-                )
-              }
+              {/* MODERN TEMPLATE */}
 
-              className={`border-2 rounded-xl p-4 cursor-pointer transition ${
-                resumeData.template === 'modern'
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-300'
-              }`}
-            >
+              <div
+                onClick={() =>
+                  handleDataChange(
+                    'template',
+                    'modern'
+                  )
+                }
 
-              <img
-                src="/template1.png"
-                alt="Modern Template"
-                className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
-              />
+                className={`border-2 rounded-xl p-4 cursor-pointer transition ${resumeData.template === 'modern'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-300'
+                  }`}
+              >
 
-              <h4 className="font-semibold text-center text-[#1d1d1f]">
-                Modern Template
-              </h4>
+                <img
+                  src="/template1.png"
+                  alt="Modern Template"
+                  className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
+                />
 
-            </div>
+                <h4 className="font-semibold text-center text-[#1d1d1f]">
+                  Modern Template
+                </h4>
 
-            {/* SIDEBAR TEMPLATE */}
+              </div>
 
-            <div
-              onClick={() =>
-                handleDataChange(
-                  'template',
-                  'sidebar'
-                )
-              }
+              {/* SIDEBAR TEMPLATE */}
 
-              className={`border-2 rounded-xl p-4 cursor-pointer transition ${
-                resumeData.template === 'sidebar'
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-300'
-              }`}
-            >
+              <div
+                onClick={() =>
+                  handleDataChange(
+                    'template',
+                    'sidebar'
+                  )
+                }
 
-              <img
-                src="/template2.jpg"
-                alt="Sidebar Template"
-                className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
-              />
+                className={`border-2 rounded-xl p-4 cursor-pointer transition ${resumeData.template === 'sidebar'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-300'
+                  }`}
+              >
 
-              <h4 className="font-semibold text-center text-[#1d1d1f]">
-                Sidebar Template
-              </h4>
+                <img
+                  src="/template2.jpg"
+                  alt="Sidebar Template"
+                  className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
+                />
+
+                <h4 className="font-semibold text-center text-[#1d1d1f]">
+                  Sidebar Template
+                </h4>
+
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+        )}
 
         {/* Navigation */}
 
@@ -223,11 +300,10 @@ function ResumeBuilder({
             onClick={handlePrevious}
             disabled={currentStep === 1}
 
-            className={`px-4 py-2 text-sm font-medium rounded-md ${
-              currentStep === 1
+            className={`px-4 py-2 text-sm font-medium rounded-md ${currentStep === 1
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-gray-600 text-white hover:bg-gray-700'
-            }`}
+              }`}
           >
             Previous
           </button>

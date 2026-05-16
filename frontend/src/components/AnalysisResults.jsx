@@ -2,8 +2,9 @@ import { useContext } from 'react';
 import ScoreVisualization from './ScoreVisualization';
 import SuggestionsList from './SuggestionsList';
 import DownloadButton from './DownloadButton';
+import ResumePreview from './ResumePreview';
 import { ResumeContext } from '../contexts/ResumeContext';
-import { cardClass, headingClass, bodyText } from '../styles/common';
+import { cardClass, headingClass } from '../styles/common';
 
 function AnalysisResults({ className = '' }) {
   const { analysisResults, currentResume } = useContext(ResumeContext);
@@ -18,7 +19,7 @@ function AnalysisResults({ className = '' }) {
     );
   }
 
-  const { atsScore, suggestions, jobMatchScore, targetRole, _id } = analysisData;
+  const { atsScore, suggestions, jobMatchScore, targetRole, _id, extractedText, improvedResume } = analysisData;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -65,6 +66,12 @@ function AnalysisResults({ className = '' }) {
           <SuggestionsList suggestions={suggestions || []} />
         </div>
       </div>
+
+      <ResumePreview
+        originalText={extractedText}
+        improvedText={improvedResume}
+        className="mt-6"
+      />
     </div>
   );
 }
