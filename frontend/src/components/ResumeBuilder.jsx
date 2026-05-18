@@ -173,7 +173,7 @@ function ResumeBuilder({
 
   return (
 
-    <div className={`max-w-5xl mx-auto px-4 sm:px-6 pb-12 ${className}`}>
+    <div className={`max-w-4xl mx-auto px-4 sm:px-6 pb-12 ${className}`}>
 
       <div className={cardClass}>
 
@@ -185,11 +185,11 @@ function ResumeBuilder({
         <div className="mb-8">
 
           <div className="flex flex-col gap-4 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               {steps.map((step) => (
                 <div
                   key={step.id}
-                  className={`rounded-2xl py-3 px-3 text-xs font-semibold uppercase tracking-[0.12em] text-center transition duration-200 ${step.id <= currentStep
+                  className={`rounded-2xl py-2 px-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.12em] text-center transition duration-200 ${step.id <= currentStep
                       ? 'bg-[#e5f0ff] text-[#004499] shadow-sm'
                       : 'bg-[#f4f6f9] text-[#8c95a2]'
                     }`}
@@ -240,16 +240,16 @@ function ResumeBuilder({
                   )
                 }
 
-                className={`border-2 rounded-xl p-4 cursor-pointer transition ${resumeData.template === 'modern'
+                className={`border-2 rounded-xl p-4 cursor-pointer transition min-h-[340px] ${resumeData.template === 'modern'
                     ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300'
+                    : 'border-gray-300 hover:border-blue-600 hover:bg-[#f7fbff]'
                   }`}
               >
 
                 <img
                   src="/template1.png"
                   alt="Modern Template"
-                  className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
+                  className="rounded-3xl mb-4 h-44 sm:h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
                 />
 
                 <h4 className="font-semibold text-center text-[#1d1d1f]">
@@ -268,16 +268,16 @@ function ResumeBuilder({
                   )
                 }
 
-                className={`border-2 rounded-xl p-4 cursor-pointer transition ${resumeData.template === 'sidebar'
+                className={`border-2 rounded-xl p-4 cursor-pointer transition min-h-[340px] ${resumeData.template === 'sidebar'
                     ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300'
+                    : 'border-gray-300 hover:border-blue-600 hover:bg-[#f7fbff]'
                   }`}
               >
 
                 <img
                   src="/template2.jpg"
                   alt="Sidebar Template"
-                  className="rounded-3xl mb-4 h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
+                  className="rounded-3xl mb-4 h-44 sm:h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
                 />
 
                 <h4 className="font-semibold text-center text-[#1d1d1f]">
@@ -300,7 +300,7 @@ function ResumeBuilder({
             onClick={handlePrevious}
             disabled={currentStep === 1}
 
-            className={`px-4 py-2 text-sm font-medium rounded-md ${currentStep === 1
+            className={`w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md ${currentStep === 1
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-gray-600 text-white hover:bg-gray-700'
               }`}
@@ -312,7 +312,7 @@ function ResumeBuilder({
 
             <button
               onClick={handleNext}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
+              className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
             >
               Next
             </button>
@@ -322,7 +322,7 @@ function ResumeBuilder({
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className={submitBtn}
+              className={submitBtn + ' w-full sm:w-auto'}
             >
               {
                 isSaving

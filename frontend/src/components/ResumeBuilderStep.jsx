@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { inputClass, labelClass, formGroup } from '../styles/common';
 
 function ResumeBuilderStep({ step, data, onDataChange }) {
-  const [experience, setExperience] = useState(data.experience || []);
-  const [education, setEducation] = useState(data.education || []);
-  const [skills, setSkills] = useState(data.skills || []);
+  const experience = data.experience || [];
+  const education = data.education || [];
+  const skills = data.skills || [];
 
   const handleInputChange = (field, value) => {
     onDataChange(field, value);
@@ -12,43 +11,34 @@ function ResumeBuilderStep({ step, data, onDataChange }) {
 
   const addExperience = () => {
     const newExp = { company: '', position: '', duration: '', description: '' };
-    const updatedExp = [...experience, newExp];
-    setExperience(updatedExp);
-    onDataChange('experience', updatedExp);
+    onDataChange('experience', [...experience, newExp]);
   };
 
   const updateExperience = (index, field, value) => {
     const updatedExp = experience.map((exp, i) =>
       i === index ? { ...exp, [field]: value } : exp
     );
-    setExperience(updatedExp);
     onDataChange('experience', updatedExp);
   };
 
   const addEducation = () => {
     const newEdu = { institution: '', degree: '', year: '' };
-    const updatedEdu = [...education, newEdu];
-    setEducation(updatedEdu);
-    onDataChange('education', updatedEdu);
+    onDataChange('education', [...education, newEdu]);
   };
 
   const updateEducation = (index, field, value) => {
     const updatedEdu = education.map((edu, i) =>
       i === index ? { ...edu, [field]: value } : edu
     );
-    setEducation(updatedEdu);
     onDataChange('education', updatedEdu);
   };
 
   const addSkill = () => {
-    const updatedSkills = [...skills, ''];
-    setSkills(updatedSkills);
-    onDataChange('skills', updatedSkills);
+    onDataChange('skills', [...skills, '']);
   };
 
   const updateSkill = (index, value) => {
     const updatedSkills = skills.map((skill, i) => (i === index ? value : skill));
-    setSkills(updatedSkills);
     onDataChange('skills', updatedSkills);
   };
 

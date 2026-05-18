@@ -31,7 +31,7 @@ function Register() {
       );
 
       console.log(res.data);
-      navigate("/login");
+      navigate("/signin");
     } catch (err) {
       console.log(err.response?.data || err.message);
     }

@@ -28,6 +28,7 @@ import {
   primaryBtn,
   secondaryBtn
 } from "../styles/common";
+import { useNavigate } from "react-router";
 
 function ResumeHistory() {
 
@@ -37,6 +38,9 @@ function ResumeHistory() {
     loading,
     error
   } = useContext(ResumeContext);
+
+  //use navigate
+  const navigate = useNavigate();
 
   const [
     filteredResumes,
@@ -302,26 +306,7 @@ function ResumeHistory() {
 
                 <div className="flex gap-2 flex-wrap">
 
-                  {/* ✅ VIEW ORIGINAL
-                  <button
-                    onClick={() => {
-
-                      if (!resume.fileUrl) {
-
-                        alert("Resume file not found");
-                        return;
-                      }
-
-                      window.open(
-                        resume.fileUrl,
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                    }}
-                    className={primaryBtn}
-                  >
-                    View Original
-                  </button> */}
+                
 
                   {/* ✅ VIEW IMPROVED */}
                   <button
@@ -340,8 +325,10 @@ function ResumeHistory() {
                       setTimeout(() => window.URL.revokeObjectURL(url), 10000);
                     }}
                     className={secondaryBtn + " text-sm px-3 py-1"}
+                     className={primaryBtn}
                   >
-                    View Improved
+                    View Original
+                    
                   </button>
 
                   {/* ✅ DOWNLOAD IMPROVED */}
@@ -353,6 +340,21 @@ function ResumeHistory() {
                     className="text-sm px-3 py-1"
                   />
 
+                  {/* ✅ EDIT */}
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/edit-resume/${resume._id}`
+                      )
+                    }
+                    className={
+                      secondaryBtn +
+                      " text-sm px-3 py-1"
+                    }
+                  >
+                    Edit
+                  </button>
+                  
                   {/* ✅ DELETE */}
                   <button
                     onClick={() =>

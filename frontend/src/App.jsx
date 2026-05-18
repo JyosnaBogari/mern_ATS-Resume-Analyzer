@@ -12,6 +12,7 @@ import DashboardUploadResume from "./components/DashboardUploadResume";
 import DashboardHeader from "./components/DashnoardHeader";
 import ResumeHistory from "./components/ResumeHistory";
 import AnalysisResults from "./components/AnalysisResults";
+import EditResume from "./components/EditResume";
 import ResumeContextProvider from "./contexts/ResumeContextProvider";
 
 function App() {
@@ -37,6 +38,10 @@ function App() {
         {
           path: "create-resume",
           element: <CreateResume />
+        },
+        {
+          path: "edit-resume/:id",
+          element: <EditResume />
         },
         // here after user login
         {
