@@ -1,150 +1,362 @@
-﻿const PAGE_WIDTH = 595;
-const PAGE_HEIGHT = 842;
-const PAGE_MARGIN = 40;
-const PAGE_BOTTOM = PAGE_HEIGHT - PAGE_MARGIN;
+﻿import {
+  PAGE_LAYOUT,
+  TYPOGRAPHY,
+  COLORS,
+  SPACING,
+  renderSectionTitle,
+  renderBodyText,
+  renderBulletList,
+  wouldExceedPage,
+  addNewPage,
+  cleanContent,
+  formatExperienceItem,
+  formatEducationItem,
+} from './pdfHelpers.js';
+
+/* ========================================================================
+   SIDEBAR TEMPLATE - Professional dark sidebar layout with content area
+   Sidebar appears on every page
+======================================================================== */
+
 const SIDEBAR_WIDTH = 180;
+const CONTENT_X = SIDEBAR_WIDTH + 30;
+const CONTENT_WIDTH = PAGE_LAYOUT.width - CONTENT_X - PAGE_LAYOUT.margin;
 
-const formatListValue = (item) => {
-  if (!item) return "";
-  if (typeof item === "string") return item;
-  if (typeof item === "object") {
-    if (item.company || item.position) {
-      return `${item.position || ""}${item.company ? ` @ ${item.company}` : ""}`.trim();
-    }
-    if (item.institution || item.degree || item.year) {
-      return `${item.degree || ""}${item.institution ? ` • ${item.institution}` : ""}${item.year ? ` (${item.year})` : ""}`.trim();
-    }
-    if (item.title || item.name) {
-      return item.title || item.name;
-    }
-    return Object.values(item).filter(Boolean).join(" • ");
-  }
-  return String(item);
-};
-
-const formatContentText = (value) => {
-  if (!value) return "";
-  if (Array.isArray(value)) {
-    return value
-      .map((item) => formatListValue(item))
-      .filter(Boolean)
-      .join("\n\n");
-  }
-  return String(value);
-};
-
-let currentContent = null;
-let sidebarRendered = false;
-
+/**
+ * Render sidebar that appears on every page
+ */
 const renderSidebar = (doc, content) => {
-  doc
-    .rect(0, 0, SIDEBAR_WIDTH, PAGE_HEIGHT)
-    .fill("#172554");
+  const sidebarX = 0;
+  const sidebarWidth = SIDEBAR_WIDTH;
 
+  // Sidebar background
   doc
+    .rect(sidebarX, 0, sidebarWidth, PAGE_LAYOUT.height)
+    .fill("#1a2952");
+
+  let sidebarY = PAGE_LAYOUT.margin + 20;
+
+  // Name (smaller on sidebar)
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(16)
     .fillColor("white")
-    .font("Helvetica-Bold")
-    .fontSize(28)
-    .text(content.name || "YOUR NAME", 30, 50, { width: 120 });
-
-  doc
-    .font("Helvetica")
-    .fontSize(10)
-    .text(content.email || "", 30, 130, { width: 120 });
-
-  doc.text(content.phone || "", 30, 150, { width: 120 });
-
-  const addSidebarSection = (title, items, y) => {
-    doc
-      .fillColor("white")
-      .font("Helvetica-Bold")
-      .fontSize(15)
-      .text(title, 30, y);
-
-    y += 24;
-
-    doc.font("Helvetica").fontSize(10);
-
-    items?.slice(0, 6).forEach((item) => {
-      doc.text(`• ${formatListValue(item)}`, 30, y, {
-        width: 120,
-        lineGap: 4
-      });
-      y = doc.y + 10;
+    .text(content.name || "YOUR NAME", sidebarX + 15, sidebarY, {
+      width: sidebarWidth - 30,
+      align: "left",
     });
 
-    return y + 10;
-  };
+  sidebarY = doc.y + 15;
 
-  let sidebarY = 220;
-  sidebarY = addSidebarSection("SKILLS", content.skills || [], sidebarY);
-  sidebarY = addSidebarSection("CERTIFICATIONS", content.certifications || [], sidebarY);
-};
+  // Contact info
+  doc
+    .font("Helvetica")
+    .fontSize(9)
+    .fillColor("#B0B8D4");
 
-const ensurePageSpace = (doc, y, requiredHeight) => {
-  if (y + requiredHeight > PAGE_BOTTOM) {
-    doc.addPage();
-    if (sidebarRendered) {
-      sidebarRendered = false;
-    }
-    return PAGE_MARGIN;
+  if (content.email) {
+    doc.text(content.email, sidebarX + 15, sidebarY, {
+      width: sidebarWidth - 30,
+    });
+    sidebarY = doc.y + 2;
   }
-  return y;
-};
 
-const addContentSection = (doc, title, text, x, y) => {
-  doc.font("Helvetica-Bold").fontSize(18);
-  const titleHeight = doc.heightOfString(title, { width: 320, lineGap: 4 });
-
-  doc.font("Helvetica").fontSize(11);
-  const contentHeight = doc.heightOfString(text || "", { width: 320, lineGap: 6 });
-
-  const sectionHeight = titleHeight + contentHeight + 36;
-  y = ensurePageSpace(doc, y, sectionHeight);
-
-  doc
-    .fillColor("#2563EB")
-    .font("Helvetica-Bold")
-    .fontSize(18)
-    .text(title, x, y);
-
-  y += titleHeight + 6;
-
-  doc
-    .moveTo(x, y)
-    .lineTo(PAGE_WIDTH - PAGE_MARGIN, y)
-    .strokeColor("#93C5FD")
-    .lineWidth(1)
-    .stroke();
-
-  y += 16;
-
-  doc
-    .fillColor("#111827")
-    .font("Helvetica")
-    .fontSize(11)
-    .text(text || "", x, y, {
-      width: 320,
-      lineGap: 6,
-      align: "left"
+  if (content.phone) {
+    doc.text(content.phone, sidebarX + 15, sidebarY, {
+      width: sidebarWidth - 30,
     });
+    sidebarY = doc.y + 8;
+  }
 
-  return doc.y + 22;
+  if (content.linkedin) {
+    doc.text(content.linkedin, sidebarX + 15, sidebarY, {
+      width: sidebarWidth - 30,
+      fontSize: 8,
+    });
+    sidebarY = doc.y + 2;
+  }
+
+  if (content.github) {
+    doc.text(content.github, sidebarX + 15, sidebarY, {
+      width: sidebarWidth - 30,
+      fontSize: 8,
+    });
+    sidebarY = doc.y + 15;
+  }
+
+  // Skills section on sidebar
+  if (content.skills && content.skills.length > 0) {
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(11)
+      .fillColor("white")
+      .text("SKILLS", sidebarX + 15, sidebarY);
+
+    sidebarY = doc.y + 8;
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor("#B0B8D4");
+
+    const skills = Array.isArray(content.skills)
+      ? content.skills
+      : [content.skills];
+    const cleanedSkills = cleanContent(skills).slice(0, 8); // Limit to fit sidebar
+
+    for (const skill of cleanedSkills) {
+      if (sidebarY + 12 > PAGE_LAYOUT.height - PAGE_LAYOUT.margin) {
+        break; // Don't overflow sidebar
+      }
+      doc.text(`• ${skill}`, sidebarX + 15, sidebarY, {
+        width: sidebarWidth - 30,
+      });
+      sidebarY = doc.y + 6;
+    }
+
+    sidebarY += 8;
+  }
+
+  // Certifications section on sidebar
+  if (content.certifications && content.certifications.length > 0) {
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(11)
+      .fillColor("white")
+      .text("CERTIFICATIONS", sidebarX + 15, sidebarY);
+
+    sidebarY = doc.y + 8;
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor("#B0B8D4");
+
+    const certs = Array.isArray(content.certifications)
+      ? content.certifications
+      : [content.certifications];
+    const cleanedCerts = cleanContent(certs).slice(0, 6);
+
+    for (const cert of cleanedCerts) {
+      if (sidebarY + 12 > PAGE_LAYOUT.height - PAGE_LAYOUT.margin) {
+        break;
+      }
+      doc.text(`• ${cert}`, sidebarX + 15, sidebarY, {
+        width: sidebarWidth - 30,
+      });
+      sidebarY = doc.y + 6;
+    }
+  }
 };
 
+/**
+ * Render main content area (right side)
+ */
+const renderSummarySection = (doc, summary, y) => {
+  if (!summary || String(summary).trim() === "") return y;
+
+  let currentY = y;
+
+  if (wouldExceedPage(currentY, 30)) {
+    return currentY;
+  }
+
+  currentY = renderSectionTitle(
+    doc,
+    "PROFESSIONAL SUMMARY",
+    CONTENT_X,
+    currentY,
+    CONTENT_WIDTH
+  );
+  currentY = renderBodyText(
+    doc,
+    String(summary).trim(),
+    CONTENT_X,
+    currentY,
+    CONTENT_WIDTH
+  );
+
+  return currentY;
+};
+
+/**
+ * Render education section
+ */
+const renderEducationSection = (doc, education, y) => {
+  if (!education || education.length === 0) return y;
+
+  let currentY = y;
+
+  if (wouldExceedPage(currentY, 30)) {
+    currentY = PAGE_LAYOUT.margin + 20;
+    renderSidebar(doc, {}); // Redraw sidebar on new page
+  }
+
+  currentY = renderSectionTitle(
+    doc,
+    "EDUCATION",
+    CONTENT_X,
+    currentY,
+    CONTENT_WIDTH
+  );
+
+  const educationArray = Array.isArray(education)
+    ? education
+    : [education];
+  const cleanedEdu = cleanContent(educationArray);
+
+  for (const edu of cleanedEdu) {
+    const eduText = formatEducationItem(edu);
+    if (!eduText.trim()) continue;
+
+    const estimatedHeight = doc.heightOfString(eduText, {
+      width: CONTENT_WIDTH,
+      lineGap: SPACING.lineHeight,
+    }) + SPACING.itemGap;
+
+    if (wouldExceedPage(currentY, estimatedHeight + 20)) {
+      doc.addPage();
+      renderSidebar(doc, {});
+      currentY = PAGE_LAYOUT.margin + 20;
+    }
+
+    doc
+      .font("Helvetica")
+      .fontSize(TYPOGRAPHY.sectionBody.size)
+      .fillColor(COLORS.text)
+      .text(eduText, CONTENT_X, currentY, {
+        width: CONTENT_WIDTH,
+        lineGap: SPACING.lineHeight,
+      });
+
+    currentY = doc.y + SPACING.itemGap;
+  }
+
+  return currentY + SPACING.sectionGap;
+};
+
+/**
+ * Render projects section
+ */
+const renderProjectsSection = (doc, projects, y) => {
+  if (!projects || projects.length === 0) return y;
+
+  let currentY = y;
+
+  if (wouldExceedPage(currentY, 30)) {
+    doc.addPage();
+    renderSidebar(doc, {});
+    currentY = PAGE_LAYOUT.margin + 20;
+  }
+
+  currentY = renderSectionTitle(
+    doc,
+    "PROJECTS",
+    CONTENT_X,
+    currentY,
+    CONTENT_WIDTH
+  );
+
+  const projectsArray = Array.isArray(projects) ? projects : [projects];
+  const cleanedProjects = cleanContent(projectsArray);
+
+  for (const project of cleanedProjects) {
+    const projText = String(project).trim();
+    if (!projText) continue;
+
+    const estimatedHeight = doc.heightOfString(projText, {
+      width: CONTENT_WIDTH,
+      lineGap: SPACING.lineHeight,
+    }) + SPACING.itemGap;
+
+    if (wouldExceedPage(currentY, estimatedHeight + 20)) {
+      doc.addPage();
+      renderSidebar(doc, {});
+      currentY = PAGE_LAYOUT.margin + 20;
+    }
+
+    doc
+      .font("Helvetica")
+      .fontSize(TYPOGRAPHY.sectionBody.size)
+      .fillColor(COLORS.text)
+      .text(projText, CONTENT_X, currentY, {
+        width: CONTENT_WIDTH,
+        lineGap: SPACING.lineHeight,
+      });
+
+    currentY = doc.y + SPACING.itemGap;
+  }
+
+  return currentY + SPACING.sectionGap;
+};
+
+/**
+ * Render experience section
+ */
+const renderExperienceSection = (doc, experience, y) => {
+  if (!experience || experience.length === 0) return y;
+
+  let currentY = y;
+
+  if (wouldExceedPage(currentY, 30)) {
+    doc.addPage();
+    renderSidebar(doc, {});
+    currentY = PAGE_LAYOUT.margin + 20;
+  }
+
+  currentY = renderSectionTitle(
+    doc,
+    "EXPERIENCE",
+    CONTENT_X,
+    currentY,
+    CONTENT_WIDTH
+  );
+
+  const experiences = Array.isArray(experience) ? experience : [experience];
+  const cleanedExp = cleanContent(experiences);
+
+  for (const exp of cleanedExp) {
+    const expText = formatExperienceItem(exp);
+    if (!expText.trim()) continue;
+
+    const estimatedHeight = doc.heightOfString(expText, {
+      width: CONTENT_WIDTH,
+      lineGap: SPACING.lineHeight,
+    }) + SPACING.itemGap;
+
+    if (wouldExceedPage(currentY, estimatedHeight + 20)) {
+      doc.addPage();
+      renderSidebar(doc, {});
+      currentY = PAGE_LAYOUT.margin + 20;
+    }
+
+    doc
+      .font("Helvetica")
+      .fontSize(TYPOGRAPHY.sectionBody.size)
+      .fillColor(COLORS.text)
+      .text(expText, CONTENT_X, currentY, {
+        width: CONTENT_WIDTH,
+        lineGap: SPACING.lineHeight,
+      });
+
+    currentY = doc.y + SPACING.itemGap;
+  }
+
+  return currentY + SPACING.sectionGap;
+};
+
+/**
+ * Main template renderer
+ */
 export const generateSidebarTemplate = (doc, content) => {
-  currentContent = content;
-  sidebarRendered = true;
+  // Initial sidebar on first page
   renderSidebar(doc, content);
 
-  let x = SIDEBAR_WIDTH + 40;
-  let y = 60;
+  let y = PAGE_LAYOUT.margin + 20;
 
-  y = addContentSection(doc, "PROFESSIONAL SUMMARY", content.summary, x, y);
-  y = addContentSection(doc, "EDUCATION", formatContentText(content.education), x, y);
-  y = addContentSection(doc, "PROJECTS", formatContentText(content.projects), x, y);
-
-  if (content.experience) {
-    y = addContentSection(doc, "EXPERIENCE", formatContentText(content.experience), x, y);
-  }
+  // Render content sections
+  y = renderSummarySection(doc, content.summary, y);
+  y = renderEducationSection(doc, content.education, y);
+  y = renderProjectsSection(doc, content.projects, y);
+  y = renderExperienceSection(doc, content.experience, y);
 };

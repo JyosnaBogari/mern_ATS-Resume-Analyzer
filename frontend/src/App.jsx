@@ -14,9 +14,21 @@ import ResumeHistory from "./components/ResumeHistory";
 import AnalysisResults from "./components/AnalysisResults";
 import EditResume from "./components/EditResume";
 import ResumeContextProvider from "./contexts/ResumeContextProvider";
+import { useAuth } from "./store/authStore";
+import { useEffect } from "react";
 
 function App() {
   // create routerObj for routing
+  const checkAuth =
+  useAuth(state => state.checkAuth);
+
+useEffect(() => {
+
+  checkAuth();
+
+}, []);
+
+//create route Object
   const routerObj = createBrowserRouter([
     {
       path: "/",

@@ -5,6 +5,10 @@ import cors from 'cors';
 import { userRoute } from './APIs/userAPI.js';
 import resumeRoute from './APIs/resumeAPI.js';
 import cookieParser from "cookie-parser";
+import passport from "passport";
+import session from "express-session";
+import "./config/googleStrategy.js";
+import googleAuthAPI from "./APIs/googleAuthAPI.js";
 config();
 //port
 const PORT = process.env.PORT || 3000;
@@ -16,7 +20,23 @@ app.use(cors({origin:["http://localhost:5173"],credentials:true}));
 app.use(exp.json({ limit: '10mb' }));
 app.use(exp.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser())
+
+// ✅ Handle favicon.ico request
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end(); // 204 No Content
+});
+
 //routes
+app.use(
+  session({
+    secret: "resume-secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use("/auth", googleAuthAPI);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/user-api', userRoute);
 app.use('/resume-api', resumeRoute);
 app.use('/resume-api',resumeRoute);

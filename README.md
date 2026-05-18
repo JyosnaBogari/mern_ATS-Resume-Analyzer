@@ -158,7 +158,8 @@ PORT=3000
 MONGO_URI=your_mongodb_url
 JWT_SECRET=your_secret
 GEMINI_API_KEY=your_api_key
-
+GOOGLE_CLIENT_ID=your_google_client_ID
+GOOGLE_CLIENT_SECRET=your_google_secret_key
 Run Backend:
 
 npm run dev
@@ -210,6 +211,8 @@ B.Tech Information Technology
 Anurag University
 
 ---
+
+
 
 # Screenshots 📸
 

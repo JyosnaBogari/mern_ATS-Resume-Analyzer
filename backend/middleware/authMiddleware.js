@@ -15,7 +15,8 @@ export const authenticateToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Access token required'
+      message: 'Please sign in to get ATS score or analyze your resume',
+      error: 'NO_TOKEN'
     });
   }
 
@@ -24,9 +25,20 @@ export const authenticateToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    // Check if token is expired
+    if (error.name === 'TokenExpiredError') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your session has expired. Please login again to continue.',
+        error: 'TOKEN_EXPIRED'
+      });
+    }
+    
+    // Invalid or malformed token
     return res.status(403).json({
       success: false,
-      message: 'Invalid or expired token'
+      message: 'Invalid authentication token. Please login again.',
+      error: 'INVALID_TOKEN'
     });
   }
 };

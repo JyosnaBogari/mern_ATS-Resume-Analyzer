@@ -26,7 +26,6 @@ userRoute.post(
 
       const newUserObj = await register({
         ...userObj,
-        role: "USER",
         profileImageUrl: cloudinaryResult?.secure_url,
       });
 
@@ -138,5 +137,52 @@ userRoute.post("/refresh", async (req, res) => {
     });
   } catch (err) {
     res.status(403).json({ message: "Invalid token" });
+  }
+});
+
+//  Check authentication
+userRoute.get("/check-auth", async (req, res) => {
+
+  const token = req.cookies.token;
+
+  if (!token) {
+
+    return res.status(401).json({
+      error: "Unauthorized"
+    });
+  }
+
+  try {
+
+    const decoded = jwt.verify(
+      token,
+      process.env.SECRET_KEY
+    );
+
+    const user =
+      await UserTypeModel.findById(
+        decoded.userId
+      );
+
+    if (!user) {
+
+      return res.status(401).json({
+        error: "User not found"
+      });
+    }
+
+    const userObj = user.toObject();
+
+    delete userObj.password;
+
+    res.status(200).json({
+      payload: userObj
+    });
+
+  } catch (err) {
+
+    res.status(401).json({
+      error: "Invalid token"
+    });
   }
 });

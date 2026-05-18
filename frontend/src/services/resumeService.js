@@ -1,27 +1,45 @@
-﻿import axios from 'axios';
+﻿import apiClient from './apiClient';
 
-const API = 'http://localhost:3000/resume-api';
+const API = 'resume-api';
 
 export const resumeService = {
   generateResume: async (resumeData) => {
-    const response = await axios.post(`${API}/generate`, resumeData, {
+    const response = await apiClient.post(`/${API}/generate`, resumeData, {
       responseType: 'blob',
-      withCredentials: true,
     });
     return response.data;
   },
 
   getResumeById: async (id) => {
-    const response = await axios.get(`${API}/get/${id}`, {
-      withCredentials: true,
-    });
+    const response = await apiClient.get(`/${API}/get/${id}`);
     return response.data.data;
   },
 
   updateResume: async (id, updateData) => {
-    const response = await axios.put(`${API}/update/${id}`, updateData, {
-      withCredentials: true,
-    });
+    const response = await apiClient.put(`/${API}/update/${id}`, updateData);
     return response.data.payload;
   },
+
+  // ✅ Fetch resume history with error handling
+  fetchResumeHistory: async () => {
+    const response = await apiClient.get(`/${API}/history`);
+    return response.data;
+  },
+
+  // ✅ Delete resume
+  deleteResume: async (id) => {
+    const response = await apiClient.delete(`/${API}/delete/${id}`);
+    return response.data;
+  },
+
+  // ✅ Upload resume with proper error handling
+  uploadResume: async (formData) => {
+    const response = await apiClient.post(`/${API}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
 };
+

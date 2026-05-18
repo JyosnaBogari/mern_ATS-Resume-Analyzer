@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
-
-// ✅ Create axios instance (BEST PRACTICE)
-const api = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true // 🔥 important for cookies
-});
+import apiClient from '../services/apiClient';
 
 export const useResumeStore = create((set, get) => ({
   currentResume: null,
@@ -25,7 +19,7 @@ export const useResumeStore = create((set, get) => ({
   uploadResume: async (formData) => {
     set({ loading: true, error: null });
     try {
-      const response = await api.post(
+      const response = await apiClient.post(
         "/resume-api/upload",
         formData,
         {
@@ -38,27 +32,46 @@ export const useResumeStore = create((set, get) => ({
       set({ currentResume: response.data.data, loading: false });
       return response.data;
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to upload resume';
       set({
-        error: error.response?.data?.message || error.message,
+        error: errorMessage,
         loading: false
       });
       throw error;
     }
   },
 
-  // ✅ Fetch History
+  // ✅ Fetch History with better error handling
   fetchResumeHistory: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get("/resume-api/history");
+      const response = await apiClient.get("/resume-api/history");
 
       set({ resumeHistory: response.data.data || [], loading: false });
       return response.data;
     } catch (error) {
-      set({
-        error: error.response?.data?.message || error.message,
-        loading: false
-      });
+      // Handle session expiration
+      if (error.isSessionExpired) {
+        set({
+          error: 'Your session has expired. Please login again to view your resume history.',
+          loading: false
+        });
+      } else if (error.isUnauthorized) {
+        set({
+          error: 'Please sign in to access your resume history.',
+          loading: false
+        });
+      } else {
+        const errorMessage = error.response?.data?.message || 
+                            error.message || 
+                            'Failed to fetch resume history';
+        set({
+          error: errorMessage,
+          loading: false
+        });
+      }
       throw error;
     }
   },
@@ -67,7 +80,7 @@ export const useResumeStore = create((set, get) => ({
   analyzeResume: async (resumeId, targetRole) => {
     set({ loading: true, error: null });
     try {
-      const response = await api.post("/resume-api/analyze", {
+      const response = await apiClient.post("/resume-api/analyze", {
         id: resumeId,
         targetRole
       });
@@ -75,8 +88,11 @@ export const useResumeStore = create((set, get) => ({
       set({ analysisResults: response.data.data, loading: false });
       return response.data;
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to analyze resume';
       set({
-        error: error.response?.data?.message || error.message,
+        error: errorMessage,
         loading: false
       });
       throw error;
@@ -86,10 +102,10 @@ export const useResumeStore = create((set, get) => ({
   // ✅ Download Resume
   downloadResume: async (resumeId) => {
     try {
-      const response = await api.get(
+      const response = await apiClient.get(
         `/resume-api/download/${resumeId}`,
         {
-          responseType: "blob" // 🔥 important
+          responseType: "blob"
         }
       );
 
@@ -103,7 +119,10 @@ export const useResumeStore = create((set, get) => ({
       document.body.removeChild(a);
 
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message });
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to download resume';
+      set({ error: errorMessage });
       throw error;
     }
   },

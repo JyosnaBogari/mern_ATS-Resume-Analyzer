@@ -4,7 +4,7 @@ import React, {
   useContext
 } from "react";
 
-import axios from "axios";
+import apiClient from "../services/apiClient";
 
 import { ResumeContext }
   from "../contexts/ResumeContext";
@@ -162,11 +162,8 @@ function ResumeHistory() {
 
         setDeletingId(resumeId);
 
-        await axios.delete(
-          `http://localhost:3000/resume-api/delete/${resumeId}`,
-          {
-            withCredentials: true
-          }
+        await apiClient.delete(
+          `/resume-api/delete/${resumeId}`
         );
 
         // Refresh history
@@ -179,9 +176,17 @@ function ResumeHistory() {
           err
         );
 
-        alert(
-          "Failed to delete resume"
-        );
+        // User-friendly error messages
+        if (err.isSessionExpired) {
+          alert("Your session has expired. Please login again.");
+        } else if (err.isUnauthorized) {
+          alert("Please sign in to delete resumes.");
+        } else {
+          alert(
+            err.response?.data?.message ||
+            "Failed to delete resume. Please try again."
+          );
+        }
 
       } finally {
 
@@ -324,8 +329,8 @@ function ResumeHistory() {
                       window.open(url, '_blank', 'noopener,noreferrer');
                       setTimeout(() => window.URL.revokeObjectURL(url), 10000);
                     }}
-                    className={secondaryBtn + " text-sm px-3 py-1"}
-                     className={primaryBtn}
+                    className={primaryBtn + " text-sm px-3 py-1"}
+                  
                   >
                     View Original
                     

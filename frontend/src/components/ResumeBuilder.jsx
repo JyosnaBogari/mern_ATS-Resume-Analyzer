@@ -48,7 +48,7 @@ function ResumeBuilder({
 
   const [currentStep, setCurrentStep] =
     useState(1);
-
+  const [errors, setErrors] = useState({});
   const [resumeData, setResumeData] =
     useState({
       firstName: '',
@@ -68,9 +68,6 @@ function ResumeBuilder({
     const isValid = validateCurrentStep();
 
     if (!isValid) {
-
-      alert("Please fill all required fields before continuing.");
-
       return;
     }
 
@@ -87,79 +84,166 @@ function ResumeBuilder({
     }
   };
 
-  const handleDataChange = (
-    field,
-    value
-  ) => {
+  //handleDataChange
+ const handleDataChange = (field, value) => {
 
-    setResumeData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  setResumeData(prev => ({
+    ...prev,
+    [field]: value,
+  }));
+
+  // remove error immediately while typing
+  setErrors(prev => ({
+    ...prev,
+    [field]: ''
+  }));
+};
 
   // for validation of the fields
-  const validateCurrentStep = () => {
+ const validateCurrentStep = () => {
+
+  let newErrors = {};
 
   // STEP 1 → PERSONAL INFO
   if (currentStep === 1) {
 
-    return (
-      resumeData.firstName.trim() !== '' &&
-      resumeData.lastName.trim() !== '' &&
-      resumeData.email.trim() !== '' &&
-      resumeData.phone.trim() !== '' &&
-      resumeData.address.trim() !== ''
-    );
+    // First Name
+    if (!resumeData.firstName.trim()) {
+      newErrors.firstName = "Please enter your first name";
+    }
+
+    // Last Name
+    if (!resumeData.lastName.trim()) {
+      newErrors.lastName = "Please enter your last name";
+    }
+
+    // Email
+    if (!resumeData.email.trim()) {
+
+      newErrors.email = "Please enter your email address";
+
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resumeData.email)
+    ) {
+
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Phone
+    if (!resumeData.phone.trim()) {
+
+      newErrors.phone = "Please enter your phone number";
+
+    } else if (
+      !/^[0-9]{10}$/.test(resumeData.phone)
+    ) {
+
+      newErrors.phone = "Phone number must contain exactly 10 digits";
+    }
+
+    // Address
+    if (!resumeData.address.trim()) {
+      newErrors.address = "Please enter your address";
+    }
   }
 
   // STEP 2 → SUMMARY
   if (currentStep === 2) {
 
-    return resumeData.summary.trim() !== '';
+    if (!resumeData.summary.trim()) {
+      newErrors.summary =
+        "Please enter your professional summary";
+    }
   }
 
   // STEP 3 → EXPERIENCE
   if (currentStep === 3) {
 
-    return (
-      resumeData.experience.length > 0 &&
-      resumeData.experience.every(
-        exp =>
-          exp.company?.trim() &&
-          exp.position?.trim() &&
-          exp.duration?.trim() &&
-          exp.description?.trim()
-      )
-    );
+    if (resumeData.experience.length === 0) {
+
+      newErrors.experience =
+        "Please add at least one work experience";
+
+    } else {
+
+      resumeData.experience.forEach((exp, index) => {
+
+        if (!exp.company?.trim()) {
+          newErrors[`company-${index}`] =
+            "Please enter company name";
+        }
+
+        if (!exp.position?.trim()) {
+          newErrors[`position-${index}`] =
+            "Please enter position";
+        }
+
+        if (!exp.duration?.trim()) {
+          newErrors[`duration-${index}`] =
+            "Please enter duration";
+        }
+
+        if (!exp.description?.trim()) {
+          newErrors[`description-${index}`] =
+            "Please enter description";
+        }
+      });
+    }
   }
 
   // STEP 4 → EDUCATION
   if (currentStep === 4) {
 
-    return (
-      resumeData.education.length > 0 &&
-      resumeData.education.every(
-        edu =>
-          edu.institution?.trim() &&
-          edu.degree?.trim() &&
-          edu.year?.trim()
-      )
-    );
+    if (resumeData.education.length === 0) {
+
+      newErrors.education =
+        "Please add at least one education detail";
+
+    } else {
+
+      resumeData.education.forEach((edu, index) => {
+
+        if (!edu.institution?.trim()) {
+          newErrors[`institution-${index}`] =
+            "Please enter institution name";
+        }
+
+        if (!edu.degree?.trim()) {
+          newErrors[`degree-${index}`] =
+            "Please enter degree";
+        }
+
+        if (!edu.year?.trim()) {
+          newErrors[`year-${index}`] =
+            "Please enter graduation year";
+        }
+      });
+    }
   }
 
   // STEP 5 → SKILLS
   if (currentStep === 5) {
 
-    return (
-      resumeData.skills.length > 0 &&
-      resumeData.skills.every(
-        skill => skill.trim() !== ''
-      )
-    );
+    if (resumeData.skills.length === 0) {
+
+      newErrors.skills =
+        "Please add at least one skill";
+
+    } else {
+
+      resumeData.skills.forEach((skill, index) => {
+
+        if (!skill.trim()) {
+          newErrors[`skill-${index}`] =
+            "Please enter a skill";
+        }
+      });
+    }
   }
 
-  return true;
+  setErrors(newErrors);
+
+  return Object.keys(newErrors).length === 0;
 };
 
   const handleSave = () => {
@@ -210,11 +294,12 @@ function ResumeBuilder({
 
         {/* Current Step */}
 
-        <ResumeBuilderStep
-          step={currentStepData}
-          data={resumeData}
-          onDataChange={handleDataChange}
-        />
+       <ResumeBuilderStep
+  step={currentStepData}
+  data={resumeData}
+  onDataChange={handleDataChange}
+  errors={errors}
+/>
 
 
 

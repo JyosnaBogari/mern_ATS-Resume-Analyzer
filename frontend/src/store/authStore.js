@@ -63,6 +63,32 @@ export const useAuth=create((set)=>({
           });
           throw err;
         }
+      },
+      checkAuth: async () => {
+
+  try {
+
+    const res = await axios.get(
+      'http://localhost:3000/user-api/check-auth',
+      {
+        withCredentials: true
       }
+    );
+
+    set({
+      currentUser: res.data.payload,
+      isAuthenticated: true,
+      error: null
+    });
+
+  } catch (err) {
+
+    set({
+      currentUser: null,
+      isAuthenticated: false
+    });
+  }
+}
+
     })
 )

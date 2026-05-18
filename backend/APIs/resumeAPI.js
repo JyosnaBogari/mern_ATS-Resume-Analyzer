@@ -139,6 +139,30 @@ router.get("/history", authenticateToken, async (req, res) => {
   }
 });
 
+// ✅ Get single resume by ID
+router.get("/get/:id", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const resume = await Resume.findById(id);
+
+    if (!resume) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    if (resume.user.toString() !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: resume
+    });
+  } catch (err) {
+    console.error("GET RESUME ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // ✅ Delete Resume
 router.delete(
@@ -285,5 +309,51 @@ router.post("/analyze", authenticateToken, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+router.put(
+  "/update/:resumeId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { resumeId } = req.params;
+      const userId = req.user.userId;
+      const resume = await Resume.findById(resumeId);
+
+      if (!resume) {
+        return res.status(404).json({
+          message: "Resume not found"
+        });
+      }
+
+      if (resume.user.toString() !== userId) {
+        return res.status(403).json({
+          message: "Unauthorized"
+        });
+      }
+
+      if (req.body.improvedResume !== undefined) {
+        resume.improvedResume = req.body.improvedResume;
+      }
+      if (req.body.template !== undefined) {
+        resume.template = req.body.template;
+      }
+      if (req.body.targetRole !== undefined) {
+        resume.targetRole = req.body.targetRole;
+      }
+
+      await resume.save();
+
+      res.status(200).json({
+        message: "Resume updated successfully",
+        payload: resume
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "Failed to update resume"
+      });
+    }
+  }
+);
 
 export default router;
