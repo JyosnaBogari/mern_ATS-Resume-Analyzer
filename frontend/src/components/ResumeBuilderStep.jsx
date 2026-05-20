@@ -4,6 +4,7 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
   const experience = data.experience || [];
   const education = data.education || [];
   const skills = data.skills || [];
+  const awards = data.awards || [];
 
   const handleInputChange = (field, value) => {
     onDataChange(field, value);
@@ -271,6 +272,15 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
     </div>
   );
 
+  const addAward = () => {
+    onDataChange('awards', [...awards, '']);
+  };
+
+  const updateAward = (index, value) => {
+    const updatedAwards = awards.map((award, i) => (i === index ? value : award));
+    onDataChange('awards', updatedAwards);
+  };
+
   const renderSkills = () => (
     <div className="space-y-4">
       {skills.map((skill, index) => (
@@ -302,6 +312,78 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
     </div>
   );
 
+  const renderAwards = () => (
+    <div className="space-y-4">
+      {awards.map((award, index) => (
+        <div key={index}>
+          <input
+            type="text"
+            placeholder="Award or achievement"
+            value={award}
+            onChange={(e) => updateAward(index, e.target.value)}
+            className={inputClass}
+          />
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={addAward}
+        className="w-full inline-flex justify-center items-center gap-2 rounded-2xl border border-[#d5dae3] bg-white px-4 py-3 text-sm font-semibold text-[#1d1d1f] hover:bg-[#f7f8fa] transition duration-200"
+      >
+        + Add Award or Achievement
+      </button>
+    
+    </div>
+  );
+
+  const renderTemplateSelection = () => (
+  <div className="mt-6">
+    <h3 className="text-2xl font-bold mb-2">
+      Choose Resume Template
+    </h3>
+
+    <p className="text-gray-500 mb-6">
+      Select a resume style for your final resume.
+    </p>
+
+    <div className="space-y-8">
+      {[
+        { value: "classic", label: "Classic", img: "/template1.jpeg" },
+        { value: "modern", label: "Modern", img: "/template2.jpeg" },
+        { value: "minimal", label: "Minimal", img: "/template3.jpeg" },
+      ].map((item) => (
+        <div
+          key={item.value}
+          onClick={() => handleInputChange("template", item.value)}
+          className={`rounded-3xl border-2 p-5 cursor-pointer transition bg-white ${
+            data.template === item.value
+              ? "border-blue-600 shadow-xl ring-4 ring-blue-100"
+              : "border-gray-200 hover:border-blue-400 hover:shadow-md"
+          }`}
+        >
+          <img
+            src={item.img}
+            alt={item.label}
+            className="w-full h-[600px] object-contain rounded-2xl bg-[#f8fafc] border"
+          />
+
+          <div className="mt-4 text-center">
+            <h4 className="text-xl font-bold">
+              {item.label}
+            </h4>
+
+            {data.template === item.value && (
+              <p className="text-blue-600 font-semibold mt-1">
+                Selected
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
   const renderStepContent = () => {
     switch (step.id) {
       case 1:
@@ -314,6 +396,10 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
         return renderEducation();
       case 5:
         return renderSkills();
+      case 6:
+  return renderAwards();
+  case 7:
+  return renderTemplateSelection();
       default:
         return null;
     }

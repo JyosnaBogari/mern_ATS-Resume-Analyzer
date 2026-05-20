@@ -23,6 +23,11 @@ const resumeSchema = new mongoose.Schema({
     default: ""
   },
 
+  originalResume: {
+    type: String,
+    default: ""
+  },
+
   atsScore: {
     type: Number,
     default: 0

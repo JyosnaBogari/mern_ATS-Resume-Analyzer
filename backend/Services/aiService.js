@@ -159,11 +159,11 @@ export const analyzeResume = async (
         targetRole,
         atsScore
       );
-      const improvedResume =
-  await generateImprovedResume(
-    resumeText,
-    targetRole
-  );
+    const improvedResume =
+      await generateImprovedResume(
+        resumeText,
+        targetRole
+      );
     return {
       atsScore,
       jobMatchScore,
@@ -476,35 +476,65 @@ const generateImprovedResume = async (
       });
 
     const prompt = `
-You are a professional ATS resume writer.
+You are a professional ATS resume writer and recruiter.
 
-Rewrite and improve this resume professionally.
+Rewrite the resume into a REAL, clean, recruiter-ready resume.
 
-STRICT RULES:
-- Preserve the exact facts from the original resume.
-- Keep original project titles and project descriptions in the PROJECTS section.
-- If a project needs improvement, add suggestions only inside PROJECTS.
-- Do not move project content into SKILLS, EXPERIENCE, EDUCATION, or any other section.
-- Use strong action verbs and ATS-friendly wording.
-- Keep the resume truthful; do not invent any new experience.
-- Do not include any scores, metadata, or analysis in the output.
-- Return plain text only, without markdown formatting, code fences, or JSON.
+VERY IMPORTANT RULES:
+- Do NOT write long paragraph explanations.
+- Do NOT write suggestions.
+- Do NOT repeat the same heading inside the same section.
+- Do NOT include "ATS Score", "Job Match Score", or "Improved Resume Content".
+- Do NOT add fake experience.
+- Keep only strong, relevant content.
+- Remove weak/repeated lines.
+- Convert content into short professional resume bullets.
+- Resume must fit within 1 to 2 pages maximum.
+- For sidebar template, keep content short enough for 1 page.
+- Use only useful sections.
 
-Use the following exact section headings in uppercase, each on its own line:
-SUMMARY
-SKILLS
-EXPERIENCE
-EDUCATION
-PROJECTS
-CERTIFICATIONS
-
-Target Role:
+TARGET ROLE:
 ${targetRole}
 
-Resume:
+OUTPUT FORMAT STRICTLY:
+
+NAME
+Phone | Email | LinkedIn | GitHub
+
+SUMMARY
+2-3 lines only. Professional and role-specific.
+
+SKILLS
+Programming Languages: ...
+Frontend: ...
+Backend: ...
+Database: ...
+Tools: ...
+
+PROJECTS
+Project Name
+- One strong bullet about what was built.
+- One strong bullet about technologies/features.
+- One strong bullet about impact or functionality.
+
+EDUCATION
+Degree, College, Year, CGPA
+
+CERTIFICATIONS
+- Certification name only
+
+ACHIEVEMENTS
+- Achievement name only
+
+LANGUAGES
+- Language name
+
+RESUME CONTENT:
 ${resumeText}
 
-Return ONLY the improved resume with the exact headings above.
+Return ONLY the final resume content.
+No markdown.
+No explanations.
 `;
 
     const result =

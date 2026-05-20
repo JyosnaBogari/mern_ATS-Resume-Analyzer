@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 
 function DashboardUploadResume() {
   const [selectedRole, setSelectedRole] = useState("");
-  const [template, setTemplate] =useState("modern");
+  const [template, setTemplate] =useState("classic");
   const { uploadResume, loading, error, clearError } = useResumeStore();
   const navigate = useNavigate();
 
@@ -120,32 +120,15 @@ formData.append(
   <label className="block text-sm font-semibold mb-2">
     Resume Template
   </label>
-
-  <select
-    value={template}
-    onChange={(e) =>
-      setTemplate(e.target.value)
-    }
-    className="
-      w-full
-      border
-      border-gray-300
-      rounded-lg
-      px-4
-      py-3
-      focus:outline-none
-      focus:ring-2
-      focus:ring-blue-500
-    "
-  >
-    <option value="modern">
-      Modern Blue
-    </option>
-
-    <option value="sidebar">
-      Sidebar Dark
-    </option>
-  </select>
+<select
+  value={template}
+  onChange={(e) => setTemplate(e.target.value)}
+  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  <option value="classic">Classic</option>
+  <option value="modern">Modern</option>
+  <option value="minimal">Minimal</option>
+</select>
 </div>
 
         <button

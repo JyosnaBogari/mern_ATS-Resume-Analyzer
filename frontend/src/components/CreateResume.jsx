@@ -76,11 +76,13 @@ function CreateResume() {
   };
 
   return (
+  <div className="w-full max-w-[1100px] mx-auto px-4">
     <ResumeBuilder
       onSave={handleSave}
       isSaving={isGenerating}
     />
-  );
+  </div>
+);
 }
 
 export default CreateResume;

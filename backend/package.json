@@ -22,6 +22,7 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "html2pdf.js": "^0.14.0",
     "jsonwebtoken": "^9.0.3",
     "mammoth": "^1.6.0",
     "mongoose": "^9.3.0",
@@ -33,6 +34,7 @@
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^5.5.207",
     "pdfkit": "^0.15.2",
+    "puppeteer": "^23.11.1",
     "streamifier": "^0.1.1"
   }
 }

@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import ScoreVisualization from './ScoreVisualization';
 import SuggestionsList from './SuggestionsList';
 import DownloadButton from './DownloadButton';
-import ResumePreview from './ResumePreview';
 import { ResumeContext } from '../contexts/ResumeContext';
 import { cardClass, headingClass } from '../styles/common';
 
@@ -19,7 +18,7 @@ function AnalysisResults({ className = '' }) {
     );
   }
 
-  const { atsScore, suggestions, jobMatchScore, targetRole, _id, extractedText, improvedResume } = analysisData;
+  const { atsScore, suggestions, jobMatchScore, targetRole, _id} = analysisData;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -57,7 +56,12 @@ function AnalysisResults({ className = '' }) {
             </div>
 
             <div className="text-center">
-              <DownloadButton resumeId={_id} />
+              <DownloadButton
+                resumeId={_id}
+                fileName="improved-resume.pdf"
+                label="Download Improved"
+                source="improved"
+              />
             </div>
           </div>
         </div>
@@ -67,11 +71,7 @@ function AnalysisResults({ className = '' }) {
         </div>
       </div>
 
-      <ResumePreview
-        originalText={extractedText}
-        improvedText={improvedResume}
-        className="mt-6"
-      />
+     
     </div>
   );
 }

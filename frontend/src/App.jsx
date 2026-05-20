@@ -30,6 +30,10 @@ useEffect(() => {
 
 //create route Object
   const routerObj = createBrowserRouter([
+     {
+    path: "/edit-resume/:id",
+    element: <EditResume />
+  },
     {
       path: "/",
       element: <RootLayout />,
@@ -50,10 +54,6 @@ useEffect(() => {
         {
           path: "create-resume",
           element: <CreateResume />
-        },
-        {
-          path: "edit-resume/:id",
-          element: <EditResume />
         },
         // here after user login
         {
@@ -83,7 +83,8 @@ useEffect(() => {
             {
               path: "analysis",
               element: <AnalysisResults />
-            }
+            },
+            
           ]
         },
       ]

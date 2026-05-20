@@ -38,18 +38,30 @@ const steps = [
     title: 'Skills',
     fields: ['skills']
   },
+  {
+    id: 6,
+    title: 'Awards & Achievements',
+    fields: ['awards']
+  },
+  {
+  id: 7,
+  title: "Template"
+}
 ];
 
 function ResumeBuilder({
   onSave = () => { },
   className = '',
-  isSaving = false
+  isSaving = false,
+  compact = false,
+  data = null,
+  onDataChange = null,
 }) {
 
   const [currentStep, setCurrentStep] =
     useState(1);
   const [errors, setErrors] = useState({});
-  const [resumeData, setResumeData] =
+  const [internalResumeData, setInternalResumeData] =
     useState({
       firstName: '',
       lastName: '',
@@ -60,8 +72,11 @@ function ResumeBuilder({
       experience: [],
       education: [],
       skills: [],
+      awards: [],
       template: 'modern',
     });
+
+  const resumeData = data || internalResumeData;
 
   const handleNext = () => {
 
@@ -86,11 +101,14 @@ function ResumeBuilder({
 
   //handleDataChange
  const handleDataChange = (field, value) => {
-
-  setResumeData(prev => ({
-    ...prev,
-    [field]: value,
-  }));
+  if (onDataChange) {
+    onDataChange(field, value);
+  } else {
+    setInternalResumeData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  }
 
   // remove error immediately while typing
   setErrors(prev => ({
@@ -166,7 +184,7 @@ function ResumeBuilder({
 
     } else {
 
-      resumeData.experience.forEach((exp, index) => {
+(resumeData.experience || []).forEach((exp, index) => {
 
         if (!exp.company?.trim()) {
           newErrors[`company-${index}`] =
@@ -201,7 +219,7 @@ function ResumeBuilder({
 
     } else {
 
-      resumeData.education.forEach((edu, index) => {
+(resumeData.education || []).forEach((edu, index) => {
 
         if (!edu.institution?.trim()) {
           newErrors[`institution-${index}`] =
@@ -224,14 +242,14 @@ function ResumeBuilder({
   // STEP 5 → SKILLS
   if (currentStep === 5) {
 
-    if (resumeData.skills.length === 0) {
+    if ((resumeData.skills || []).length === 0) {
 
       newErrors.skills =
         "Please add at least one skill";
 
     } else {
 
-      resumeData.skills.forEach((skill, index) => {
+      (resumeData.skills || []).forEach((skill, index) => {
 
         if (!skill.trim()) {
           newErrors[`skill-${index}`] =
@@ -239,6 +257,11 @@ function ResumeBuilder({
         }
       });
     }
+  }
+
+  // STEP 6 → AWARDS & ACHIEVEMENTS
+  if (currentStep === 6) {
+    // Awards are optional, no strict validation required.
   }
 
   setErrors(newErrors);
@@ -255,21 +278,25 @@ function ResumeBuilder({
       step => step.id === currentStep
     );
 
+  const wrapperClass = compact
+    ? `w-full ${className}`
+    : `max-w-[1200px] mx-auto px-4 sm:px-6 pb-12 ${className}`;
+
   return (
 
-    <div className={`max-w-4xl mx-auto px-4 sm:px-6 pb-12 ${className}`}>
+    <div className={wrapperClass}>
 
       <div className={cardClass}>
 
         <h1 className={formTitle + " mb-8 text-center"}>
-          Build your premium resume
+          Build your resume
         </h1>
 
         {/* Progress Bar */}
         <div className="mb-8">
 
           <div className="flex flex-col gap-4 mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
               {steps.map((step) => (
                 <div
                   key={step.id}
@@ -300,82 +327,6 @@ function ResumeBuilder({
   onDataChange={handleDataChange}
   errors={errors}
 />
-
-
-
-        {/* Template Selection */}
-
-        {currentStep === 5 && (
-
-          <div className="mt-8">
-
-            <h3 className="text-lg font-semibold mb-4">
-              Choose Resume Template
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              {/* MODERN TEMPLATE */}
-
-              <div
-                onClick={() =>
-                  handleDataChange(
-                    'template',
-                    'modern'
-                  )
-                }
-
-                className={`border-2 rounded-xl p-4 cursor-pointer transition min-h-[340px] ${resumeData.template === 'modern'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300 hover:border-blue-600 hover:bg-[#f7fbff]'
-                  }`}
-              >
-
-                <img
-                  src="/template1.png"
-                  alt="Modern Template"
-                  className="rounded-3xl mb-4 h-44 sm:h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
-                />
-
-                <h4 className="font-semibold text-center text-[#1d1d1f]">
-                  Modern Template
-                </h4>
-
-              </div>
-
-              {/* SIDEBAR TEMPLATE */}
-
-              <div
-                onClick={() =>
-                  handleDataChange(
-                    'template',
-                    'sidebar'
-                  )
-                }
-
-                className={`border-2 rounded-xl p-4 cursor-pointer transition min-h-[340px] ${resumeData.template === 'sidebar'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-300 hover:border-blue-600 hover:bg-[#f7fbff]'
-                  }`}
-              >
-
-                <img
-                  src="/template2.jpg"
-                  alt="Sidebar Template"
-                  className="rounded-3xl mb-4 h-44 sm:h-52 w-full object-cover border border-[#e7ecf4] shadow-sm"
-                />
-
-                <h4 className="font-semibold text-center text-[#1d1d1f]">
-                  Sidebar Template
-                </h4>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        )}
 
         {/* Navigation */}
 

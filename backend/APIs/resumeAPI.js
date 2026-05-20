@@ -5,7 +5,7 @@ import { extractTextFromBuffer } from "../utils/extractText.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
 import Resume from "../models/Resume.js";
 import { analyzeResume } from "../Services/aiService.js";
-import { generateImprovedResume } from "../utils/resumeGenerator.js";
+import { generateResumePdf } from "../utils/resumeGenerator.js";
 import { generateResume } from "../controllers/resumeController.js";
 const router = express.Router();
 
@@ -27,7 +27,6 @@ const validateResumeContent = (text) => {
     }
   });
 
-  // Need at least 6 resume-related keywords to validate
   const isLikelyResume = matchCount >= 6;
   const matchPercentage = (matchCount / resumeKeywords.length) * 100;
 
@@ -50,16 +49,11 @@ router.post(
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      console.log("FILE:", req.file);
-      console.log("BODY:", req.body);
-
-     const {targetRole,template} = req.body;
+      const { targetRole, template } = req.body;
       const userId = req.user.userId;
 
-      //  Extract text
       const extractedText = await extractTextFromBuffer(req.file.buffer);
 
-      // ✅ Validate if it's actually a resume
       const validation = validateResumeContent(extractedText);
       console.log(`📋 Resume Validation: ${validation.matchCount} keywords found (${validation.matchPercentage.toFixed(1)}%)`);
 
@@ -70,43 +64,24 @@ router.post(
         });
       }
 
-      // Upload to Cloudinary
       const result = await uploadToCloudinary(req.file.buffer);
 
-      //  ✅ Call REAL Gemini API Analysis
       console.log('🤖 Analyzing resume with Gemini AI...');
       const analysisResult = await analyzeResume(extractedText, targetRole || 'General');
 
-      //  Save to DB
-    const newResume = new Resume({
-
-  user: userId,
-
-  fileUrl:
-    result.secure_url,
-
-  publicId:
-    result.public_id,
-
-  extractedText,
-
-  atsScore:
-    analysisResult.atsScore,
-
-  suggestions:
-    analysisResult.suggestions,
-
-  targetRole:
-    targetRole || "General",
-
-  jobMatchScore:
-    analysisResult.jobMatchScore,
-
-  improvedResume:
-    analysisResult.improvedResume,
-    template:
-  template || "modern",
-});
+      const newResume = new Resume({
+        user: userId,
+        fileUrl: result.secure_url,
+        publicId: result.public_id,
+        extractedText,
+        originalResume: extractedText,
+        atsScore: analysisResult.atsScore,
+        suggestions: analysisResult.suggestions,
+        targetRole: targetRole || "General",
+        jobMatchScore: analysisResult.jobMatchScore,
+        improvedResume: analysisResult.improvedResume,
+        template: template || "modern",
+      });
 
       await newResume.save();
 
@@ -115,7 +90,6 @@ router.post(
         message: "Resume uploaded & analyzed",
         data: newResume,
       });
-
     } catch (err) {
       console.error("UPLOAD ERROR:", err);
       res.status(500).json({ message: err.message });
@@ -140,7 +114,7 @@ router.get("/history", authenticateToken, async (req, res) => {
 });
 
 // ✅ Get single resume by ID
-router.get("/get/:id", authenticateToken, async (req, res) => {
+router.get(["/get/:id", "/resume/:id"], authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
@@ -169,32 +143,17 @@ router.delete(
   "/delete/:id",
   authenticateToken,
   async (req, res) => {
-
     try {
-
       const { id } = req.params;
-
-      const userId =
-        req.user.userId;
-
-      const resume =
-        await Resume.findById(id);
+      const userId = req.user.userId;
+      const resume = await Resume.findById(id);
 
       if (!resume) {
-
-        return res.status(404).json({
-          message: "Resume not found"
-        });
+        return res.status(404).json({ message: "Resume not found" });
       }
 
-      // Ownership check
-      if (
-        resume.user.toString() !== userId
-      ) {
-
-        return res.status(403).json({
-          message: "Unauthorized"
-        });
+      if (resume.user.toString() !== userId) {
+        return res.status(403).json({ message: "Unauthorized" });
       }
 
       await Resume.findByIdAndDelete(id);
@@ -203,18 +162,9 @@ router.delete(
         success: true,
         message: "Resume deleted successfully"
       });
-
     } catch (err) {
-
-      console.error(
-        "DELETE ERROR:",
-        err
-      );
-
-      res.status(500).json({
-        message:
-          "Failed to delete resume"
-      });
+      console.error("DELETE ERROR:", err);
+      res.status(500).json({ message: "Failed to delete resume" });
     }
   }
 );
@@ -224,51 +174,31 @@ router.get(
   "/download/:id",
   authenticateToken,
   async (req, res) => {
-
     try {
-
       const { id } = req.params;
-
-      const userId =
-        req.user.userId;
-
-      // Find Resume
-      const resume =
-        await Resume.findById(id);
+      const userId = req.user.userId;
+      const resume = await Resume.findById(id);
 
       if (!resume) {
-
         return res.status(404).json({
           message: "Resume not found"
         });
       }
 
-      // Ownership Check
-      if (
-        resume.user.toString() !== userId
-      ) {
-
+      if (resume.user.toString() !== userId) {
         return res.status(403).json({
           message: "Unauthorized"
         });
       }
 
-      // ✅ Generate PDF directly
-      await generateImprovedResume(
-        resume,
-        res
-      );
+      const source = req.query.source === "current" ? "current" : "improved";
+      await generateResumePdf(resume, res, source);
 
     } catch (err) {
-
-      console.error(
-        "DOWNLOAD ERROR:",
-        err
-      );
+      console.error("DOWNLOAD ERROR:", err);
 
       res.status(500).json({
-        message:
-          "Failed to download resume"
+        message: "Failed to download resume"
       });
     }
   }
@@ -311,7 +241,7 @@ router.post("/analyze", authenticateToken, async (req, res) => {
 });
 
 router.put(
-  "/update/:resumeId",
+  ["/update/:resumeId", "/resume/:resumeId"],
   authenticateToken,
   async (req, res) => {
     try {
@@ -333,6 +263,12 @@ router.put(
 
       if (req.body.improvedResume !== undefined) {
         resume.improvedResume = req.body.improvedResume;
+      }
+      if (req.body.extractedText !== undefined) {
+        resume.extractedText = req.body.extractedText;
+      }
+      if (req.body.originalResume !== undefined) {
+        resume.originalResume = req.body.originalResume;
       }
       if (req.body.template !== undefined) {
         resume.template = req.body.template;

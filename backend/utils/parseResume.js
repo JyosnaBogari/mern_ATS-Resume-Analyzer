@@ -1,7 +1,4 @@
-﻿export const parseResume = (
-  text = ""
-) => {
-
+﻿export const parseResume = (text = "") => {
   const cleanText = text
     .replace(/\r/g, "")
     .replace(/\*\*/g, "")
@@ -13,8 +10,8 @@
       .replace(/^[\s\-\*•]+/, "")
       .trim();
 
-  const splitAndClean = (text) =>
-    text
+  const splitAndClean = (value) =>
+    value
       .split("\n")
       .map(cleanLine)
       .filter(Boolean);
@@ -35,7 +32,8 @@
     education: [],
     projects: [],
     experience: [],
-    certifications: []
+    certifications: [],
+    achievements: []
   };
 
   content.name = lines[0] || "YOUR NAME";
@@ -45,17 +43,17 @@
     content.email = emailMatch[0];
   }
 
-  const phoneMatch = cleanText.match(/(\+91[-\s]?)?[0-9]{10}/);
+  const phoneMatch = cleanText.match(/(\+\d{1,3}[-\s]?)?[0-9]{7,14}/);
   if (phoneMatch) {
     content.phone = phoneMatch[0];
   }
 
-  const linkedinMatch = cleanText.match(/linkedin\.com\/[^\s]+/i);
+  const linkedinMatch = cleanText.match(/linkedin\.com\/[^\n\s]+/i);
   if (linkedinMatch) {
     content.linkedin = linkedinMatch[0];
   }
 
-  const githubMatch = cleanText.match(/github\.com\/[^\s]+/i);
+  const githubMatch = cleanText.match(/github\.com\/[^\n\s]+/i);
   if (githubMatch) {
     content.github = githubMatch[0];
   }
@@ -74,8 +72,8 @@
 
   content.summary = splitAndClean(
     extractSection(
-      ["SUMMARY", "PROFESSIONAL SUMMARY", "CAREER SUMMARY"],
-      ["TECHNICAL SKILLS", "SKILLS", "EDUCATION", "EXPERIENCE", "PROJECTS"]
+      ["SUMMARY", "PROFESSIONAL SUMMARY", "CAREER SUMMARY", "PROFILE"],
+      ["TECHNICAL SKILLS", "SKILLS", "EDUCATION", "EXPERIENCE", "PROJECTS", "ACHIEVEMENTS", "CERTIFICATIONS"]
     )
   )
     .join(" ")
@@ -84,39 +82,46 @@
   const skillsText =
     extractSection(
       ["TECHNICAL SKILLS", "SKILLS", "TOOLS"],
-      ["EDUCATION", "CERTIFICATIONS", "PROJECTS", "EXPERIENCE"]
+      ["EDUCATION", "CERTIFICATIONS", "PROJECTS", "EXPERIENCE", "ACHIEVEMENTS"]
     ) ||
     extractSection(
       ["SKILLS"],
-      ["EDUCATION", "CERTIFICATIONS", "PROJECTS", "EXPERIENCE"]
+      ["EDUCATION", "CERTIFICATIONS", "PROJECTS", "EXPERIENCE", "ACHIEVEMENTS"]
     );
   content.skills = splitAndClean(skillsText);
 
   content.education = splitAndClean(
     extractSection(
-      ["EDUCATION", "ACADEMIC BACKGROUND"],
-      ["CERTIFICATIONS", "PROJECTS", "EXPERIENCE", "LANGUAGES"]
+      ["EDUCATION", "ACADEMIC BACKGROUND", "ACADEMIC EXPERIENCE"],
+      ["CERTIFICATIONS", "PROJECTS", "EXPERIENCE", "ACHIEVEMENTS", "LANGUAGES"]
     )
   );
 
   content.projects = splitAndClean(
     extractSection(
-      ["PROJECTS", "SELECTED PROJECTS"],
-      ["EXPERIENCE", "CERTIFICATIONS", "LANGUAGES"]
+      ["PROJECTS", "SELECTED PROJECTS", "RELEVANT PROJECTS"],
+      ["EXPERIENCE", "CERTIFICATIONS", "LANGUAGES", "ACHIEVEMENTS"]
     )
   );
 
   content.experience = splitAndClean(
     extractSection(
-      ["EXPERIENCE", "WORK EXPERIENCE", "PROFESSIONAL EXPERIENCE"],
-      ["CERTIFICATIONS", "LANGUAGES", "PROJECTS"]
+      ["EXPERIENCE", "WORK EXPERIENCE", "PROFESSIONAL EXPERIENCE", "EMPLOYMENT HISTORY"],
+      ["CERTIFICATIONS", "LANGUAGES", "PROJECTS", "ACHIEVEMENTS"]
     )
   );
 
   content.certifications = splitAndClean(
     extractSection(
-      ["CERTIFICATIONS", "COURSEWORK"],
-      ["PROJECTS", "LANGUAGES", "EXPERIENCE"]
+      ["CERTIFICATIONS", "COURSEWORK", "TRAINING"],
+      ["PROJECTS", "LANGUAGES", "EXPERIENCE", "ACHIEVEMENTS"]
+    )
+  );
+
+  content.achievements = splitAndClean(
+    extractSection(
+      ["ACHIEVEMENTS", "AWARDS", "HONORS", "RECOGNITION"],
+      ["PROJECTS", "EXPERIENCE", "CERTIFICATIONS", "LANGUAGES"]
     )
   );
 
