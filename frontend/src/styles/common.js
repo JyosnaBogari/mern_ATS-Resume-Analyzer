@@ -7,8 +7,8 @@ export const pageWrapper = "max-w-6xl mx-auto px-4 py-8 md:px-6 lg:px-8"
 export const section = "mb-14"
 
 // --- Cards --------------------------------------------
-export const cardClass = "bg-white border border-[#e8ebf2] rounded-[28px] p-6 shadow-sm transition duration-300 hover:shadow-lg hover:border-[#dbe1ea]"
-
+export const cardClass =
+  "bg-white/70 backdrop-blur-md border border-white/40 rounded-[28px] p-6 shadow-md transition duration-300 hover:shadow-xl hover:border-white/60";
 // --- Typography ---------------------------------------
 export const pageTitleClass = "text-4xl sm:text-5xl font-semibold text-[#1d1d1f] tracking-tight leading-tight mb-3"
 export const headingClass = "text-3xl sm:text-4xl font-semibold text-[#1d1d1f] tracking-tight"

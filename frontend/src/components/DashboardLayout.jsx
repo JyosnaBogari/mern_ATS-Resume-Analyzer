@@ -10,7 +10,7 @@ function DashboardLayout() {
       <DashboardHeader />
 
       {/* Body */}
-      <div className="flex flex-1 flex-col md:flex-row md:items-start">
+<div className="flex flex-1 flex-col md:flex-row md:items-start bg-gradient-to-br from-[#eef6ff] via-[#f8fbff] to-[#dbeafe]">
 
         {/* Sidebar */}
         <DashboardSidebar />

@@ -79,13 +79,13 @@ formData.append(
   };
 
   return (
-    <div className={pageBackground + " px-4 py-10"}>
+    <div className=" px-2 py-2 ">
       <form
         onSubmit={handleSubmit(formSubmit)}
         className={formCard + " max-w-2xl"}
       >
         <h1 className={formTitle}>ATS Resume Analyzer</h1>
-        <p className="text-center text-sm text-[#6e6e73] mb-6">
+        <p className="text-center text-sm text-[#6e6e73] mb-3">
           Upload a resume and choose a template to generate a polished, ATS-ready version.
         </p>
 
@@ -96,7 +96,7 @@ formData.append(
           onRoleChange={setSelectedRole}
           className="mb-4"
         />
-        <p className="text-sm text-gray-500 mb-4">Optional: Select a target role for role-based resume analysis.</p>
+        <p className="text-sm text-gray-500 mb-2">Optional: Select a target role for role-based resume analysis.</p>
         <div className={formGroup}>
           <label className={labelClass} htmlFor="file">Resume File</label>
           <input
@@ -112,7 +112,7 @@ formData.append(
         <p className="text-sm text-gray-600 mb-2">
           <span className={subHeadingClass}>Supported File Types:</span> PDF, DOC, DOCX
         </p>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 mb-2">
           <span className={subHeadingClass}>Max File Size:</span> 2MB
         </p>
         

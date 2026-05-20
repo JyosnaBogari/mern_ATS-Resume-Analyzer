@@ -137,7 +137,7 @@ link.download = fileName;
   }
 
   return (
-    <div className="min-h-screen bg-[#080d1d] text-white flex overflow-hidden">
+ <div className="min-h-screen bg-gradient-to-br from-[#eef6ff] via-[#f8fbff] to-[#dbeafe] text-[#1d1d1f] flex overflow-hidden">
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -169,10 +169,11 @@ link.download = fileName;
         <nav className="flex flex-col gap-4">
           <button
             onClick={() => setActiveTab("editor")}
-            className={`group relative rounded-2xl px-4 py-3 text-left font-semibold transition ${activeTab === "editor"
-              ? "bg-blue-600 text-white"
-              : "text-blue-100 hover:bg-white/10"
-              }`}
+            className={`group relative rounded-2xl px-4 py-3 text-left font-semibold transition ${
+    activeTab === "editor"
+      ? "bg-white text-blue-600 shadow-sm"
+      : "bg-white text-[#4b5563] hover:bg-[#eef6ff]"
+  }`}
           >
             {sidebarOpen ? "Edit Content" : "✎"}
 
@@ -248,7 +249,7 @@ link.download = fileName;
 
           <button
             onClick={() => navigate("/dashboard/history")}
-            className="group relative rounded-2xl px-4 py-3 text-left border border-white/10 hover:bg-white/10 transition"
+            className="group relative flex items-center justify-center rounded-2xl w-12 h-12 bg-white-100 text-[#4b5563] border border-[#dbe7f7] hover:bg-[#eef6ff] transition shadow-sm"
           >
             {sidebarOpen ? "Back to History" : "←"}
 
@@ -266,11 +267,11 @@ link.download = fileName;
         {/* Top Bar */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
-
+       {/* */}
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden bg-white/10 px-4 py-2 rounded-xl"
+              className="lg:hidden bg-blue-600 text-white px-4 py-2 rounded-xl shadow-sm hover:bg-blue-700"
             >
               ☰ Menu
             </button>
@@ -287,14 +288,14 @@ link.download = fileName;
 >
           {/* Editor Section */}
           <section
-            className={`bg-[#10182b] border border-white/10 rounded-3xl overflow-hidden h-full flex flex-col ${activeTab === "editor" || activeTab === "template" ? "block" : "hidden"
+            className={`bg-white/90 border border-[#dbe7f7] rounded-3xl overflow-hidden h-full flex flex-col ${activeTab === "editor" || activeTab === "template" ? "block" : "hidden"
               }`}
           >
-            <div className="border-b border-white/10 p-5">
+            <div className="border-b border-[#dbe7f7] p-5">
               <h2 className="text-xl font-bold">
                 {activeTab === "template" ? "Choose Template" : "Edit Content"}
               </h2>
-              <p className="text-blue-200 text-sm">
+              <p className="text-black-200 text-sm">
                 Edit resume content and select template style.
               </p>
             </div>
@@ -305,13 +306,16 @@ link.download = fileName;
                   <button
                     key={item}
                     onClick={() => setTemplate(item)}
-                    className={`rounded-2xl border p-5 text-left capitalize transition ${template === item
-                      ? "border-blue-500 bg-blue-600/20"
-                      : "border-white/10 bg-[#0d1426] hover:bg-white/10"
-                      }`}
+             className={`rounded-2xl border-2 p-5 text-left capitalize transition shadow-sm ${
+  template === item
+    ? "border-blue-600 bg-blue-600 text-white shadow-lg scale-[1.02]"
+    : "border-[#dbe7f7] bg-white hover:border-blue-400 hover:bg-[#eef6ff] text-[#1d1d1f]"
+}`}
                   >
                     <h3 className="font-bold text-lg">{item}</h3>
-                    <p className="text-sm text-blue-200 mt-2">
+                   <p className={`text-sm mt-2 ${
+  template === item ? "text-blue-50" : "text-[#64748b]"
+}`}>
                       {item === "classic" &&
                         "Clean ATS-friendly professional format."}
                       {item === "modern" &&
@@ -327,7 +331,7 @@ link.download = fileName;
                 <textarea
                   value={resumeText}
                   onChange={(e) => setResumeText(e.target.value)}
-                  className="w-full h-[70vh] resize-none rounded-2xl bg-[#0b1222] border border-white/10 p-5 text-white leading-8 outline-none focus:border-blue-500"
+                  className="w-full h-[70vh] resize-none rounded-2xl bg-[#f8fbff] border border-[#dbe7f7] text-[#1d1d1f] leading-8 outline-none focus:border-blue-500"
                   placeholder="Edit your resume content here..."
                 />
               </div>
@@ -337,7 +341,7 @@ link.download = fileName;
           {/* Preview Section */}
           {/* Preview Section */}
           <section
-            className={`bg-[#10182b] border border-white/10 rounded-3xl overflow-hidden h-full flex flex-col ${activeTab === "preview" || activeTab === "editor" || activeTab === "template"
+            className={`bg-white/90 border border-[#dbe7f7] rounded-3xl overflow-hidden h-full flex flex-col ${activeTab === "preview" || activeTab === "editor" || activeTab === "template"
                 ? "block"
                 : "hidden"
               }`}
