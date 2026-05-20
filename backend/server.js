@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = exp();
 //cors
-app.use(cors({origin:["http://localhost:5173"],credentials:true}));
+app.use(cors({origin:["http://localhost:5173"],credentials:true,exposedHeaders: ["Content-Disposition"]}));
 //body parser
 app.use(exp.json({ limit: '10mb' }));
 app.use(exp.urlencoded({ extended: true, limit: '10mb' }));

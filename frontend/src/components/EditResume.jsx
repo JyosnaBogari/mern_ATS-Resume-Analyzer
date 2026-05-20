@@ -99,7 +99,18 @@ setTemplate(location.state?.template || data.template || "classic");
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = `resume-${id}.pdf`;
+    const disposition = response.headers["content-disposition"];
+
+let fileName = "resume.pdf";
+
+if (disposition) {
+  const match = disposition.match(/filename="(.+)"/);
+  if (match?.[1]) {
+    fileName = match[1];
+  }
+}
+
+link.download = fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();

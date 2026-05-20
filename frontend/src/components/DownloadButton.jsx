@@ -25,7 +25,18 @@ function DownloadButton({
     if (!response.ok) throw new Error("Download failed");
 
     const blob = await response.blob();
-    saveAs(blob, fileName);
+    const disposition = response.headers.get("Content-Disposition");
+
+let serverFileName = fileName;
+
+if (disposition) {
+  const match = disposition.match(/filename="(.+)"/);
+  if (match?.[1]) {
+    serverFileName = match[1];
+  }
+}
+
+saveAs(blob, serverFileName);
   };
 
   const handleDownload = async () => {

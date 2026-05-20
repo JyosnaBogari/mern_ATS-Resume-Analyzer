@@ -96,11 +96,10 @@ const renderSection = (title, content) => {
   return `
     <section class="section">
       <h2>${title}</h2>
-      ${
-        Array.isArray(content)
-          ? renderList(content)
-          : `<p>${escapeHtml(content)}</p>`
-      }
+      ${Array.isArray(content)
+      ? renderList(content)
+      : `<p>${escapeHtml(content)}</p>`
+    }
     </section>
   `;
 };
@@ -112,18 +111,18 @@ const renderEducation = (education = []) => {
     <section class="section">
       <h2>Education</h2>
       ${education
-        .map(
-          (edu) => `
+      .map(
+        (edu) => `
         <div class="item">
           <strong>${escapeHtml(edu.degree || "")}</strong>
           <p>${escapeHtml(edu.institution || "")}</p>
           <p>${escapeHtml(
-            [edu.location, edu.year, edu.score].filter(Boolean).join(" | ")
-          )}</p>
+          [edu.location, edu.year, edu.score].filter(Boolean).join(" | ")
+        )}</p>
         </div>
       `
-        )
-        .join("")}
+      )
+      .join("")}
     </section>
   `;
 };
@@ -135,37 +134,35 @@ const renderProjects = (projects = []) => {
     <section class="section">
       <h2>Projects</h2>
       ${projects
-        .map(
-          (project) => `
+      .map(
+        (project) => `
         <div class="item">
           <strong>${escapeHtml(project.title || "")}</strong>
 
-          ${
-            Array.isArray(project.description)
-              ? `
+          ${Array.isArray(project.description)
+            ? `
             <ul>
               ${project.description
-                .map((desc) => `<li>${escapeHtml(desc)}</li>`)
-                .join("")}
+              .map((desc) => `<li>${escapeHtml(desc)}</li>`)
+              .join("")}
             </ul>
           `
-              : project.description
+            : project.description
               ? `<p>${escapeHtml(project.description)}</p>`
               : ""
           }
 
-          ${
-            Array.isArray(project.technologies) &&
+          ${Array.isArray(project.technologies) &&
             project.technologies.length > 0
-              ? `<p><strong>Tech:</strong> ${escapeHtml(
-                  project.technologies.join(", ")
-                )}</p>`
-              : ""
+            ? `<p><strong>Tech:</strong> ${escapeHtml(
+              project.technologies.join(", ")
+            )}</p>`
+            : ""
           }
         </div>
       `
-        )
-        .join("")}
+      )
+      .join("")}
     </section>
   `;
 };
@@ -177,31 +174,30 @@ const renderExperience = (experience = []) => {
     <section class="section">
       <h2>Experience</h2>
       ${experience
-        .map((exp) => {
-          if (typeof exp === "string") {
-            return `<p>${escapeHtml(exp)}</p>`;
-          }
+      .map((exp) => {
+        if (typeof exp === "string") {
+          return `<p>${escapeHtml(exp)}</p>`;
+        }
 
-          return `
+        return `
             <div class="item">
               <strong>${escapeHtml(exp.role || exp.title || "")}</strong>
               <p>${escapeHtml(
-                [exp.company, exp.location, exp.duration]
-                  .filter(Boolean)
-                  .join(" | ")
-              )}</p>
+          [exp.company, exp.location, exp.duration]
+            .filter(Boolean)
+            .join(" | ")
+        )}</p>
 
-              ${
-                Array.isArray(exp.description)
-                  ? renderList(exp.description)
-                  : exp.description
-                  ? `<p>${escapeHtml(exp.description)}</p>`
-                  : ""
-              }
+              ${Array.isArray(exp.description)
+            ? renderList(exp.description)
+            : exp.description
+              ? `<p>${escapeHtml(exp.description)}</p>`
+              : ""
+          }
             </div>
           `;
-        })
-        .join("")}
+      })
+      .join("")}
     </section>
   `;
 };
@@ -330,23 +326,22 @@ const modernTemplate = (content) => {
 
     ${renderSection("Summary", content.summary)}
 
-    ${
-      content.skills.length
-        ? `
+    ${content.skills.length
+      ? `
       <section class="section">
         <h2>Skills</h2>
         <div class="skills-list">
           ${content.skills
-            .slice(0, 30)
-            .map(
-              (skill) =>
-                `<span class="skill-pill">${escapeHtml(skill)}</span>`
-            )
-            .join("")}
+        .slice(0, 30)
+        .map(
+          (skill) =>
+            `<span class="skill-pill">${escapeHtml(skill)}</span>`
+        )
+        .join("")}
         </div>
       </section>
     `
-        : ""
+      : ""
     }
 
     ${renderExperience(content.experience)}
@@ -497,49 +492,45 @@ const sidebarTemplate = (content) => {
         ${escapeHtml(contactLine).replaceAll(" | ", "<br/>")}
       </div>
 
-      ${
-        content.skills.length
-          ? `
+      ${content.skills.length
+      ? `
         <div class="side-section">
           <h2>Skills</h2>
           ${renderList(content.skills.slice(0, 24))}
         </div>
       `
-          : ""
-      }
+      : ""
+    }
 
-      ${
-        content.certifications.length
-          ? `
+      ${content.certifications.length
+      ? `
         <div class="side-section">
           <h2>Certifications</h2>
           ${renderList(content.certifications.slice(0, 10))}
         </div>
       `
-          : ""
-      }
+      : ""
+    }
 
-      ${
-        content.languages.length
-          ? `
+      ${content.languages.length
+      ? `
         <div class="side-section">
           <h2>Languages</h2>
           ${renderList(content.languages.slice(0, 6))}
         </div>
       `
-          : ""
-      }
+      : ""
+    }
 
-      ${
-        content.coursework.length
-          ? `
+      ${content.coursework.length
+      ? `
         <div class="side-section">
           <h2>Coursework</h2>
           ${renderList(content.coursework.slice(0, 8))}
         </div>
       `
-          : ""
-      }
+      : ""
+    }
     </aside>
 
     <main class="main">
@@ -640,15 +631,14 @@ const rawSection = (title, items = [], options = {}) => {
   return `
     <section class="section ${dark ? "dark-section" : ""}">
       <h2>${escapeHtml(title)}</h2>
-      ${
-        paragraph
-          ? `<p>${escapeHtml(items.join(" "))}</p>`
-          : inline
-          ? `<p>${escapeHtml(items.join(" • "))}</p>`
-          : `<ul>${items
-              .map((item) => `<li>${escapeHtml(item)}</li>`)
-              .join("")}</ul>`
-      }
+      ${paragraph
+      ? `<p>${escapeHtml(items.join(" "))}</p>`
+      : inline
+        ? `<p>${escapeHtml(items.join(" • "))}</p>`
+        : `<ul>${items
+          .map((item) => `<li>${escapeHtml(item)}</li>`)
+          .join("")}</ul>`
+    }
     </section>
   `;
 };
@@ -1019,10 +1009,14 @@ export const generateResumePdf = async (resume, res, source = "improved") => {
   try {
     const html = generateResumeHtml(resume, source);
 
+    const safeName = (resume.originalFileName || "resume.pdf")
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[^a-zA-Z0-9-_ ]/g, "");
+
     const filename =
       source === "current"
-        ? `resume-${resume._id}.pdf`
-        : `improved-resume-${resume._id}.pdf`;
+        ? `${safeName}-edited.pdf`
+        : `${safeName}-improved.pdf`;
 
     browser = await puppeteer.launch({
       headless: "new",
@@ -1068,18 +1062,73 @@ export const generateResumePdf = async (resume, res, source = "improved") => {
     }
   }
 };
-
 export const generateImprovedResume = async (data, res) => {
-  try {
-    const structuredData = data.structuredData || {};
+  let browser;
 
-    return res.status(200).json({
-      message: "Resume generated successfully",
-      payload: {
-        structuredData,
-        improvedResume: data.improvedResume || "",
+  try {
+    const template = data.template || "classic";
+
+    const text = `
+${data.firstName || ""} ${data.lastName || ""}
+
+${data.email || ""} | ${data.phone || ""} | ${data.address || ""}
+
+PROFESSIONAL SUMMARY
+${data.summary || ""}
+
+EXPERIENCE
+${(data.experience || [])
+        .map(
+          (exp) => `${exp.position || ""} - ${exp.company || ""}
+${exp.duration || ""}
+${exp.description || ""}`
+        )
+        .join("\n\n")}
+
+EDUCATION
+${(data.education || [])
+        .map(
+          (edu) => `${edu.degree || ""} - ${edu.institution || ""}
+${edu.year || ""}`
+        )
+        .join("\n\n")}
+
+SKILLS
+${(data.skills || []).join(" • ")}
+
+ACHIEVEMENTS
+${(data.awards || []).join("\n")}
+`;
+
+    const html = rawResumeTemplate(text, template);
+
+    browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+
+    await page.setContent(html, {
+      waitUntil: "networkidle0",
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      preferCSSPageSize: true,
+      margin: {
+        top: "0mm",
+        right: "0mm",
+        bottom: "0mm",
+        left: "0mm",
       },
     });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="resume.pdf"`);
+
+    res.send(pdfBuffer);
   } catch (error) {
     console.error("RESUME GENERATION ERROR:", error);
 
@@ -1087,6 +1136,10 @@ export const generateImprovedResume = async (data, res) => {
       res.status(500).json({
         message: "Resume generation failed",
       });
+    }
+  } finally {
+    if (browser) {
+      await browser.close();
     }
   }
 };

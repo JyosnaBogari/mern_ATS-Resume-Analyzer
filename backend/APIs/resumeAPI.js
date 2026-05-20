@@ -73,6 +73,7 @@ router.post(
         user: userId,
         fileUrl: result.secure_url,
         publicId: result.public_id,
+        originalFileName: req.file.originalname,
         extractedText,
         originalResume: extractedText,
         atsScore: analysisResult.atsScore,

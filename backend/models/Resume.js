@@ -17,7 +17,10 @@ const resumeSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
-
+originalFileName: {
+  type: String,
+  default: "resume.pdf"
+},
   extractedText: {
     type: String,
     default: ""
