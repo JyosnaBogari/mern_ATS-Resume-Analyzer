@@ -9,6 +9,11 @@ import { uploadToCloudinary } from "../config/CloudinaryUpload.js";
 
 export const userRoute = exp.Router();
 
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production",
+};
 //  Register user
 userRoute.post(
   "/users",
@@ -49,12 +54,7 @@ userRoute.post("/authenticate", async (req, res, next) => {
     let userCred = req.body;
     let { token, user } = await authenticate(userCred);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
-
+    res.cookie("token", token,cookieOptions)
     res.status(200).json({
       message: "user authenticated successfully",
       payload: user,
@@ -66,11 +66,7 @@ userRoute.post("/authenticate", async (req, res, next) => {
 
 //  Logout
 userRoute.get("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
+  res.clearCookie("token",cookieOptions)
 
   res.status(200).json({ message: "logged out successfully" });
 });
@@ -125,11 +121,7 @@ userRoute.post("/refresh", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", newToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-    });
+    res.cookie("token", newToken, cookieOptions)
 
     const userObj = user.toObject();
     delete userObj.password;

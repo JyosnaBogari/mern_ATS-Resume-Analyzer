@@ -21,7 +21,7 @@ app.use(exp.json({ limit: '10mb' }));
 app.use(exp.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser())
 
-// ✅ Handle favicon.ico request
+//  Handle favicon.ico request
 app.get('/favicon.ico', (req, res) => {
   res.status(204).end(); // 204 No Content
 });
