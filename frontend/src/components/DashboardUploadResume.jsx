@@ -71,10 +71,17 @@ formData.append(
       }
 
     } catch (err) {
-
-      toast.error(
-        "Upload failed. Please try again."
-      );
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+      if (status === 401 || status === 403) {
+        toast.error("Please sign in again to continue.");
+      } else if (message) {
+        toast.error(message);
+      } else if (err.code === 'ERR_NETWORK') {
+        toast.error("Server is not responding. Please try again later.");
+      } else {
+        toast.error("Upload failed. Please try again.");
+      }
     }
   };
 

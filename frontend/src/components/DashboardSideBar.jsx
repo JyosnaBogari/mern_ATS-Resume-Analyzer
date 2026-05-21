@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { useAuth } from "../store/authStore";
 import { toast } from "react-hot-toast";
@@ -12,11 +13,19 @@ import {
 function DashboardSidebar() {
     const logout = useAuth(state => state.logout)
     const navigate = useNavigate();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const SignOut = async () => {
-        await logout()
-        toast.success("Logged Out Successfully")
-        navigate('/signin')
+        try {
+            setIsLoggingOut(true);
+            await logout();
+            toast.success("Logged Out Successfully");
+            navigate('/signin');
+        } catch (error) {
+            toast.error("Logout failed. Please try again.");
+        } finally {
+            setIsLoggingOut(false);
+        }
     }
 
 
@@ -48,8 +57,8 @@ function DashboardSidebar() {
             </NavLink>
           </li>
           <li>
-            <button onClick={SignOut} className={secondaryBtn + " w-full text-left"}>
-              Logout
+            <button onClick={SignOut} disabled={isLoggingOut} className={secondaryBtn + " w-full text-left"}>
+              {isLoggingOut ? "Logging out..." : "Logout"}
             </button>
           </li>
         </ul>

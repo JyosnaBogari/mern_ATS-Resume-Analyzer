@@ -52,7 +52,7 @@ router.post(
       const { targetRole, template } = req.body;
       const userId = req.user.userId;
 
-      const extractedText = await extractTextFromBuffer(req.file.buffer);
+      const extractedText = await extractTextFromBuffer(req.file.buffer, req.file.mimetype);
 
       const validation = validateResumeContent(extractedText);
       console.log(`📋 Resume Validation: ${validation.matchCount} keywords found (${validation.matchPercentage.toFixed(1)}%)`);
@@ -93,7 +93,15 @@ router.post(
       });
     } catch (err) {
       console.error("UPLOAD ERROR:", err);
-      res.status(500).json({ message: err.message });
+      let message = "Unable to upload resume right now. Please check your internet/server and try again.";
+      if (err.message.includes("Gemini") || err.message.includes("AI")) {
+        message = "Resume uploaded, but AI analysis could not be completed. Please try again.";
+      }
+      res.status(500).json({ 
+        success: false, 
+        message,
+        error: "UPLOAD_FAILED"
+      });
     }
   }
 );

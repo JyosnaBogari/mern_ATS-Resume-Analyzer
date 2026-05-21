@@ -44,21 +44,24 @@ userRoute.post(
 );
 
 //  Login
-userRoute.post("/authenticate", async (req, res) => {
-  let userCred = req.body;
+userRoute.post("/authenticate", async (req, res, next) => {
+  try {
+    let userCred = req.body;
+    let { token, user } = await authenticate(userCred);
 
-  let { token, user } = await authenticate(userCred);
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: false,
-  });
-
-  res.status(200).json({
-    message: "user authenticated successfully",
-    payload: user,
-  });
+    res.status(200).json({
+      message: "user authenticated successfully",
+      payload: user,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 //  Logout

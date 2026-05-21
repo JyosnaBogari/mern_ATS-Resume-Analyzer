@@ -27,14 +27,14 @@ export const authenticate = async ({ email, password}) => {
     //check with useer with email and role
     const user = await UserTypeModel.findOne({ email});
     if (!user) {
-        const err = new Error("Invalid email");
+        const err = new Error("Invalid email or password");
         err.status = 401;
         throw err;
     }
     //compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        const err = new Error("Invalid password");
+        const err = new Error("Invalid email or password");
         err.status = 401;
         throw err;
     } 

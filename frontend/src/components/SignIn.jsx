@@ -1,7 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { useAuth } from "../store/authStore";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { errorClass,formCard,formTitle,inputClass,formGroup,submitBtn, pageBackground } from "../styles/common";
 import {toast} from 'react-hot-toast';
@@ -15,11 +15,16 @@ function SignIn() {
   const currentUser=useAuth(state=>state.currentUser)
   const navigate=useNavigate();
   const location = useLocation();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [sessionMessage, setSessionMessage] = useState('');
 
-  const onUserLogin = async(userCredObj)=>{
+  const onUserLogin = async (userCredObj) => {
+  try {
     await login(userCredObj);
+  } catch (err) {
+    toast.error(err.message || "Login failed. Please try again.");
   }
+};
 
   useEffect(() => {
     // Check for session expiration message in URL
@@ -38,17 +43,8 @@ function SignIn() {
  useEffect(() => {
 
   if (isAuthenticated && currentUser) {
-
-    toast.success(
-      "Logged In successfully",
-      {
-        id: "login-success"
-      }
-    );
-
-    navigate('/dashboard');
+    navigate('/dashboard', { replace: true });
   }
-
 }, [isAuthenticated, currentUser]);
   
   return (
@@ -116,15 +112,16 @@ function SignIn() {
       {/* Login Button */}
       <button
         type="submit"
+        disabled={isLoggingIn}
         className={submitBtn}
       >
-        Sign In
+        {isLoggingIn ? "Signing in..." : "Sign In"}
       </button>
       <button
   type="button"
   onClick={() => {
     window.location.href =
-      "http://localhost:3000/auth/google";
+      `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/auth/google`;
   }}
   className="w-full mt-4 flex items-center justify-center gap-3 border border-gray-300 rounded-2xl px-5 py-3 bg-white hover:bg-gray-50 transition"
 >

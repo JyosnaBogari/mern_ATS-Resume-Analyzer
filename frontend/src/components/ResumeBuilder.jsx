@@ -261,6 +261,19 @@ function ResumeBuilder({
   };
 
   const handleSave = () => {
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'summary'];
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+      if (!resumeData[field]?.trim()) isValid = false;
+    });
+
+    if (resumeData.education.length === 0 || resumeData.skills.length === 0) isValid = false;
+
+    if (!isValid) {
+      toast.error("Please fill in all required fields (Personal Info, Summary, Education, and Skills)");
+      return;
+    }
     onSave(resumeData);
   };
 

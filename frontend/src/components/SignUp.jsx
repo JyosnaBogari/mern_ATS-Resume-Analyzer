@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-hot-toast";
 
 function Register() {
   const { register, handleSubmit } = useForm();
@@ -24,16 +25,17 @@ function Register() {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/user-api/users",
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      await axios.post(
+        `${API_URL}/user-api/users`,
         formData,
         { withCredentials: true }
       );
 
-      console.log(res.data);
+      toast.success("Account created successfully! Please sign in.");
       navigate("/signin");
     } catch (err) {
-      console.log(err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -51,28 +53,28 @@ function Register() {
         <input
           type="text"
           placeholder="First Name"
-          {...register("firstName")}
+          {...register("firstName", { required: true })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
           type="text"
           placeholder="Last Name"
-          {...register("lastName")}
+          {...register("lastName", { required: true })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
           type="email"
           placeholder="Email"
-          {...register("email")}
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <input
           type="password"
           placeholder="Password"
-          {...register("password")}
+          {...register("password", { required: true })}
           className="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
 

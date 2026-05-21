@@ -29,17 +29,16 @@ app.get('/favicon.ico', (req, res) => {
 //routes
 app.use(
   session({
-    secret: "resume-secret",
+    secret: process.env.SESSION_SECRET || "resume-secret",
     resave: false,
     saveUninitialized: false,
   })
 );
-app.use("/auth", googleAuthAPI);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/auth", googleAuthAPI);
 app.use('/user-api', userRoute);
 app.use('/resume-api', resumeRoute);
-app.use('/resume-api',resumeRoute);
 
 //connect to DB 
 const connectDB = async () => {
@@ -66,7 +65,7 @@ connectDB();
 //after checking all the pathsi.e APIs then if not match come to here
 app.use((req, res, next) => {
   console.log(req.url);
-  res.json({ message: `${req.url} is Invalid path` })
+  res.status(404).json({ message: "Route not found" })
 });
 
 
@@ -114,7 +113,8 @@ app.use((err, req, res, next) => {
 
   // default server error
   res.status(500).json({
-    message: "error occurred",
-    error: "Server side error",
+    success: false,
+    message: process.env.NODE_ENV === "production" ? "Internal Server Error" : err.message,
+    error: err.name || "SERVER_ERROR",
   });
 });

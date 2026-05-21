@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { Link } from 'react-router';
 import { ResumeContext } from '../contexts/ResumeContext';
 import { headingClass, cardClass, bodyText, primaryBtn } from '../styles/common';
 
@@ -12,17 +13,17 @@ function Dashboard() {
         <div className={cardClass}>
           <h3 className="font-semibold mb-2">Upload Resume</h3>
           <p className={bodyText + " mb-4"}>Upload your resume to get ATS compatibility score.</p>
-          <a href="/dashboard/upload-resume" className={primaryBtn}>Upload Now</a>
+          <Link to="/dashboard/upload-resume" className={primaryBtn}>Upload Now</Link>
         </div>
         <div className={cardClass}>
           <h3 className="font-semibold mb-2">Create Resume</h3>
           <p className={bodyText + " mb-4"}>Build a new resume with our templates.</p>
-          <a href="/dashboard/create-resume" className={primaryBtn}>Create Now</a>
+          <Link to="/dashboard/create-resume" className={primaryBtn}>Create Now</Link>
         </div>
         <div className={cardClass}>
           <h3 className="font-semibold mb-2">Resume History</h3>
           <p className={bodyText + " mb-4"}>View and manage your uploaded resumes.</p>
-          <a href="/dashboard/history" className={primaryBtn}>View History</a>
+          <Link to="/dashboard/history" className={primaryBtn}>View History</Link>
         </div>
         {currentResume && (
           <div className={cardClass + " border-blue-200 bg-blue-50"}>
@@ -33,9 +34,9 @@ function Dashboard() {
             <p className="text-sm text-blue-700 mb-4">
               Target Role: {currentResume.targetRole || 'General'}
             </p>
-            <a href="/dashboard/analysis" className={primaryBtn + " bg-blue-600 hover:bg-blue-700"}>
+            <Link to="/dashboard/analysis" className={primaryBtn + " bg-blue-600 hover:bg-blue-700"}>
               View Results
-            </a>
+            </Link>
           </div>
         )}
       </div>

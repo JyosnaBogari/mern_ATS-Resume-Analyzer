@@ -11,6 +11,7 @@ import DashboardSidebar from "./components/DashboardSideBar";
 import DashboardUploadResume from "./components/DashboardUploadResume";
 import DashboardHeader from "./components/DashnoardHeader";
 import ResumeHistory from "./components/ResumeHistory";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AnalysisResults from "./components/AnalysisResults";
 import EditResume from "./components/EditResume";
 import ResumeContextProvider from "./contexts/ResumeContextProvider";
@@ -32,7 +33,11 @@ useEffect(() => {
   const routerObj = createBrowserRouter([
      {
     path: "/edit-resume/:id",
-    element: <EditResume />
+    element: (
+      <ProtectedRoute>
+        <EditResume />
+      </ProtectedRoute>
+    )
   },
     {
       path: "/",
@@ -59,9 +64,11 @@ useEffect(() => {
         {
           path: "dashboard",
           element: (
-            <ResumeContextProvider>
-              <DashboardLayout />
-            </ResumeContextProvider>
+            <ProtectedRoute>
+              <ResumeContextProvider>
+                <DashboardLayout />
+              </ResumeContextProvider>
+            </ProtectedRoute>
           ),
           children: [
             {
