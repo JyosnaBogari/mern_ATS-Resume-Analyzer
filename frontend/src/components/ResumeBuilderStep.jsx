@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { inputClass, labelClass, formGroup } from '../styles/common';
 
-function ResumeBuilderStep({ step, data, onDataChange, errors }) {
+function ResumeBuilderStep({data = {},onDataChange,errors = {},}) {
   const experience = data.experience || [];
   const education = data.education || [];
   const skills = data.skills || [];
   const awards = data.awards || [];
+ const [openSection, setOpenSection] = useState("personal");
 
   const handleInputChange = (field, value) => {
     onDataChange(field, value);
@@ -43,6 +45,30 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
     onDataChange('skills', updatedSkills);
   };
 
+  const SectionBox = ({ id, title, icon, children }) => (
+  <div className="rounded-3xl border border-[#dbe7f7] bg-white shadow-sm overflow-hidden">
+    <button
+      type="button"
+      onClick={() => setOpenSection(openSection === id ? "" : id)}
+      className="w-full flex items-center justify-between px-6 py-5 text-left"
+    >
+      <div className="flex items-center gap-4">
+        <span className="text-2xl">{icon}</span>
+        <h3 className="text-xl font-semibold text-[#1d1d1f]">{title}</h3>
+      </div>
+
+      <span className="text-2xl text-gray-500">
+        {openSection === id ? "⌃" : "⌄"}
+      </span>
+    </button>
+
+    {openSection === id && (
+      <div className="border-t border-[#e8ebf2] px-6 py-6">
+        {children}
+      </div>
+    )}
+  </div>
+);
   const renderPersonalInfo = () => (
     <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -405,12 +431,37 @@ function ResumeBuilderStep({ step, data, onDataChange, errors }) {
     }
   };
 
-  return (
-    <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">{step.title}</h2>
-      {renderStepContent()}
-    </div>
-  );
+ return (
+  <div className="space-y-5">
+    <SectionBox id="personal" title="Personal Information" icon="👤">
+      {renderPersonalInfo()}
+    </SectionBox>
+
+    <SectionBox id="summary" title="Professional Summary" icon="📄">
+      {renderSummary()}
+    </SectionBox>
+
+    <SectionBox id="experience" title="Work Experience" icon="💼">
+      {renderExperience()}
+    </SectionBox>
+
+    <SectionBox id="education" title="Educations" icon="🎓">
+      {renderEducation()}
+    </SectionBox>
+
+    <SectionBox id="skills" title="Skills" icon="⚡">
+      {renderSkills()}
+    </SectionBox>
+
+    <SectionBox id="awards" title="Awards & Achievements" icon="🏆">
+      {renderAwards()}
+    </SectionBox>
+
+    <SectionBox id="template" title="Choose Template" icon="🎨">
+      {renderTemplateSelection()}
+    </SectionBox>
+  </div>
+);
 }
 
 export default ResumeBuilderStep;
